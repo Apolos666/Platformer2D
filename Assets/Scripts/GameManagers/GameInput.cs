@@ -6,6 +6,7 @@ namespace Askeladd.Scripts.GameManagers
 {
     public class GameInput : MonoBehaviour
     {
+        // Singleton
         public static GameInput Instance { get; private set; }
 
         private UserInput _userInput;

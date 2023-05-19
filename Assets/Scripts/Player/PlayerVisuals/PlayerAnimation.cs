@@ -29,6 +29,8 @@ namespace Askeladd.Scripts.Player.PlayerVisuals
             TurnCharacter();
         }
 
+
+        // Not clean yet
         private void TurnCharacter()
         {
             if (playerHandleMovement.p_IsFacingRight)

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Askeladd.Scripts.ScriptableObjects
 {
     [CreateAssetMenu(menuName = "Player Data")]
-    public class PlayerData : ScriptableObject
+    public class PlayerDataSO : ScriptableObject
     {
         [Header("Gravity")]
         [HideInInspector] public float gravityStrength; //Downwards force (gravity) needed for the desired jumpHeight and jumpTimeToApex.
@@ -25,20 +25,23 @@ namespace Askeladd.Scripts.ScriptableObjects
         [HideInInspector] public float JumpForce; //The actual force applied (upwards) to the player when they jump.
 
         private void OnValidate()
-        {
-            #region "not get it"
-            //Calculate gravity strength using the formula (gravity = 2 * jumpHeight / timeToJumpApex^2) 
+        {        
+            // Calculate gravity strength (Due to being near the ground, the acceleration is equivalent to gravity.)
+            // using the formula (gravity = 2 * jumpHeight / timeToJumpApex^2) 
+            // Apply the Kinematic Equations and Free Fall formula to calculate gravityStrength.
             gravityStrength = -(2 * JumpHeight) / (JumpTimeToApex * JumpTimeToApex);
 
-            //Calculate the rigidbody's gravity scale (ie: gravity strength relative to unity's gravity value, see project settings/Physics)
+            // Calculate the rigidbody's gravity scale (ie: gravity strength relative to unity's gravity value, see project settings/Physics)
+            // Divide to calculate the ratio between the character's gravity and the system's gravity.
             gravityScale = gravityStrength / Physics2D.gravity.y;
-            
+
+            #region "not get it"
             // Calculate are run acceleration & deceleration forces using formula: amount = ((1 / Time.fixedDeltaTime) * acceleration) / runMaxSpeed
             // If runAcceleration is equal to runMaxSpeed, consider runAccelAmount as zero.
-            RunAccelAmount = (50 * RunAcceleration) / RunMaxSpeed;
+            RunAccelAmount = (50 * RunAcceleration) / RunMaxSpeed;  
             RunDeccelAmount = (50 * RunDecceleration) / RunMaxSpeed;
 
-            //Calculate jumpForce using the formula (initialJumpVelocity = gravity * timeToJumpApex)
+            // Calculate jumpForce using the formula (initialJumpVelocity = gravity * timeToJumpApex)
             JumpForce = Mathf.Abs(gravityStrength) * JumpTimeToApex;
             #endregion
         }

@@ -13,14 +13,20 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         [Header("References")]
         [SerializeField]
         private Rigidbody playerRb;
+        private PlayerHandleGravity playerHandleGravity; // To handle gravity
 
         [Header("Player Settings")]
         [SerializeField]
-        private PlayerData playerData;
+        private PlayerDataSO playerDataSO;
 
         [Description("Player States")]
         public bool p_IsMoving { get; private set; } = false;
         public bool p_IsFacingRight { get; private set; } = true;
+
+        private void Awake()
+        {
+            playerHandleGravity = GetComponent<PlayerHandleGravity>();
+        }
 
         private void Start()
         {
@@ -38,30 +44,9 @@ namespace Askeladd.Scripts.Player.PlayerLogics
 
         private void FixedUpdate()
         {
-            SetGravityScale(playerData.gravityScale);
             HandleMovementHorizontal();
             IsUserMoving();
             IsFacingRight();
-        }
-
-        private void OnEnable()
-        {
-            // Turn off Physics/Gravity, instead of using custom gravity.
-            playerRb.useGravity = false;
-        }
-
-        /// <summary>
-        /// Using custom gravity instead of system gravity.
-        /// </summary>
-        private void SetGravityScale(float scale)
-        {
-            #region "not get it"
-
-            Vector3 gravity = scale * Physics.gravity;
-
-            #endregion
-
-            playerRb.AddForce(gravity, ForceMode.Acceleration);
         }
 
         /// <summary>
@@ -74,7 +59,7 @@ namespace Askeladd.Scripts.Player.PlayerLogics
             #region "Target speed"
 
             // Calculate the direction we want to move in and our desired velocity
-            float targetSpeed = moveDir.x * playerData.RunMaxSpeed;
+            float targetSpeed = moveDir.x * playerDataSO.RunMaxSpeed;
 
             // Using Lerp to smooths change velocity
             // Here, we assign the value of targetSpeed to targetSpeed above.
@@ -85,7 +70,7 @@ namespace Askeladd.Scripts.Player.PlayerLogics
             #region "Accel rate"
 
             // Calculate acceleration rate
-            float accelRate = (Mathf.Abs(moveDir.x) > 0.01f) ? playerData.RunAccelAmount : playerData.RunDeccelAmount;
+            float accelRate = (Mathf.Abs(moveDir.x) > 0.01f) ? playerDataSO.RunAccelAmount : playerDataSO.RunDeccelAmount;
 
             #endregion
 
@@ -108,7 +93,7 @@ namespace Askeladd.Scripts.Player.PlayerLogics
 
         private void HandleJumping()
         {
-            float jumpForce = playerData.JumpForce;
+            float jumpForce = playerDataSO.JumpForce;
 
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 

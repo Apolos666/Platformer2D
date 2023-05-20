@@ -22,11 +22,46 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         public bool p_IsMoving { get; private set; } = false;
         public bool p_IsFacingRight { get; private set; } = true;
 
+        private void Start()
+        {
+            GameInput.Instance.OnJumpingPerformed += GameInput_OnJumpingPerformed;
+        }
+
+        #region "Events"
+
+        private void GameInput_OnJumpingPerformed()
+        {
+            HandleJumping();
+        }
+
+        #endregion
+
         private void FixedUpdate()
         {
+            SetGravityScale(playerData.gravityScale);
             HandleMovementHorizontal();
             IsUserMoving();
             IsFacingRight();
+        }
+
+        private void OnEnable()
+        {
+            // Turn off Physics/Gravity, instead of using custom gravity.
+            playerRb.useGravity = false;
+        }
+
+        /// <summary>
+        /// Using custom gravity instead of system gravity.
+        /// </summary>
+        private void SetGravityScale(float scale)
+        {
+            #region "not get it"
+
+            Vector3 gravity = scale * Physics.gravity;
+
+            #endregion
+
+            playerRb.AddForce(gravity, ForceMode.Acceleration);
         }
 
         /// <summary>
@@ -34,16 +69,15 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         /// </summary>
         private void HandleMovementHorizontal()
         {
-            #region "need to research again"
             Vector2 moveDir = GameInput.Instance.GetMovementInput2DNormalized();
 
             #region "Target speed"
 
             // Calculate the direction we want to move in and our desired velocity
             float targetSpeed = moveDir.x * playerData.RunMaxSpeed;
-            Debug.Log("targetSpeed: " + targetSpeed);
 
             // Using Lerp to smooths change velocity
+            // Here, we assign the value of targetSpeed to targetSpeed above.
             targetSpeed = Mathf.Lerp(playerRb.velocity.x, targetSpeed, 1);
 
             #endregion
@@ -55,18 +89,29 @@ namespace Askeladd.Scripts.Player.PlayerLogics
 
             #endregion
 
-            // Calculates the remaining speed that the character has yet to move
-            float speedRemain = targetSpeed - playerRb.velocity.x;
+            #region "Apply the missing force"
+
+            // Calculates the current velocity vs targetSpeed
+            // To calculate how much additional force is needed for the player to reach maximum velocity.
+            // If the player's current velocity is close to the maximum, just add a little bit of force; if the player's velocity is low, increase the force significantly.
+            float speedDiff = targetSpeed - playerRb.velocity.x;
 
             // Calculates the force needed to apply to the player to reach maxSpeed
             // Apply acceleration to create a gradual increase or decrease in velocity.
-            float movement = speedRemain * accelRate;
-            Debug.Log("Movement: " + movement);
+            // Add the missing force to reach the maximum velocity.
+            float movement = speedDiff * accelRate;
 
             playerRb.AddForce(movement * Vector2.right, ForceMode.Force);
 
-            //Debug.Log("player velocity: " + playerRb.velocity.x);
             #endregion
+        }
+
+        private void HandleJumping()
+        {
+            float jumpForce = playerData.JumpForce;
+
+            playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
         }
 
         // Not clean yet

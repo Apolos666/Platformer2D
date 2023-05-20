@@ -12,8 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb3143093691fb24f958f900ee577dc0, type: 3}
   m_Name: Player Data
   m_EditorClassIdentifier: 
+  gravityStrength: -29.629631
+  gravityScale: 3.0203495
   RunMaxSpeed: 7
   RunAcceleration: 1
   RunAccelAmount: 7.142857
-  RunDecceleration: 1
-  RunDeccelAmount: 7.142857
+  RunDecceleration: 1.3
+  RunDeccelAmount: 9.285714
+  JumpHeight: 3
+  JumpTimeToApex: 0.45
+  JumpForce: 13.333334

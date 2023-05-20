@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,12 @@ namespace Askeladd.Scripts.GameManagers
     {
         // Singleton
         public static GameInput Instance { get; private set; }
+
+        #region "Events"
+
+        public event Action OnJumpingPerformed;
+
+        #endregion
 
         private UserInput _userInput;
 
@@ -28,7 +35,12 @@ namespace Askeladd.Scripts.GameManagers
 
         private void Start()
         {
-            // Events          
+            _userInput.Player.Jumping.performed += Jumping_performed;        
+        }
+
+        private void Jumping_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            OnJumpingPerformed?.Invoke();
         }
 
         private void OnDestroy()

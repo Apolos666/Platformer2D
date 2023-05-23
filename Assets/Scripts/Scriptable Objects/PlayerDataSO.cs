@@ -8,9 +8,11 @@ namespace Askeladd.Scripts.ScriptableObjects
     public class PlayerDataSO : ScriptableObject
     {
         [Header("Gravity")]
-        [HideInInspector] public float gravityStrength; //Downwards force (gravity) needed for the desired jumpHeight and jumpTimeToApex.
-        [HideInInspector] public float gravityScale; // Strength of the player's gravity as a multiplier of gravity (set in ProjectSettings/Physics).
+        [HideInInspector] public float GravityStrength; // Downwards force (gravity) needed for the desired jumpHeight and jumpTimeToApex.
+        [HideInInspector] public float GravityScale; // Strength of the player's gravity as a multiplier of gravity (set in ProjectSettings/Physics).
                                                      // Also the value the player's rigidbody2D.gravityScale is set to.
+        public float FallSpeedMult; // Mult with gravity when velocity < 0 to increase falling speed
+        public float MaxFallSpeed; // Limit falling speed
 
         [Header("Movement horizontal")]
         public float RunMaxSpeed; // Target speed we want the player to reach
@@ -29,20 +31,26 @@ namespace Askeladd.Scripts.ScriptableObjects
             // Calculate gravity strength (Due to being near the ground, the acceleration is equivalent to gravity.)
             // using the formula (gravity = 2 * jumpHeight / timeToJumpApex^2) 
             // Apply the Kinematic Equations and Free Fall formula to calculate gravityStrength.
-            gravityStrength = -(2 * JumpHeight) / (JumpTimeToApex * JumpTimeToApex);
+            // Not apply to player gravity yet
+            // The gravity we want to achieve in the game
+            GravityStrength = -(2 * JumpHeight) / (JumpTimeToApex * JumpTimeToApex);
 
             // Calculate the rigidbody's gravity scale (ie: gravity strength relative to unity's gravity value, see project settings/Physics)
             // Divide to calculate the ratio between the character's gravity and the system's gravity.
-            gravityScale = gravityStrength / Physics2D.gravity.y;
+            // To calculate the level of gravity influence, assuming gravityStrength is greater than Physics.gravity.y, the result will be greater than 1, and vice versa. Then, we multiply gravityScale with the current gravity of Unity to create the desired gravitational force.
+            // Apply to player gravity
+            // gravityScale * physics.gravity.y = gravityStrength, This step calculates the ratio number that will be multiplied by physics.gravity.y to achieve the desired gravity in the game
+            GravityScale = GravityStrength / Physics.gravity.y;
 
             #region "not get it"
             // Calculate are run acceleration & deceleration forces using formula: amount = ((1 / Time.fixedDeltaTime) * acceleration) / runMaxSpeed
-            // If runAcceleration is equal to runMaxSpeed, consider runAccelAmount as zero.
+            // The formula is used to calculate the acceleration increase by applying a coefficient divided by the maximum level, thus generating a relative acceleration level for the object(e.g., 0.7).This allows the object to gradually increase its speed using the relative acceleration value over time, rather than instantaneously.
             RunAccelAmount = (50 * RunAcceleration) / RunMaxSpeed;  
             RunDeccelAmount = (50 * RunDecceleration) / RunMaxSpeed;
 
             // Calculate jumpForce using the formula (initialJumpVelocity = gravity * timeToJumpApex)
-            JumpForce = Mathf.Abs(gravityStrength) * JumpTimeToApex;
+            // using the formula Accelerated Motion Equations (v = u + gt) v = 0, u = JumpForce
+            JumpForce = Mathf.Abs(GravityStrength) * JumpTimeToApex;
             #endregion
         }
     }

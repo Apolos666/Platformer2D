@@ -81,9 +81,10 @@ namespace Askeladd.Scripts.Player.PlayerLogics
             // If the player's current velocity is close to the maximum, just add a little bit of force; if the player's velocity is low, increase the force significantly.
             float speedDiff = targetSpeed - playerRb.velocity.x;
 
-            // Calculates the force needed to apply to the player to reach maxSpeed
+            // Calculates the force needed to apply to the player to reach maxSpeed.
             // Apply acceleration to create a gradual increase or decrease in velocity.
             // Add the missing force to reach the maximum velocity.
+            // The movement will be equal zero when player reach max speed.
             float movement = speedDiff * accelRate;
 
             playerRb.AddForce(movement * Vector2.right, ForceMode.Force);

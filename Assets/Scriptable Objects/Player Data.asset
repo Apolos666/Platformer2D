@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb3143093691fb24f958f900ee577dc0, type: 3}
   m_Name: Player Data
   m_EditorClassIdentifier: 
-  gravityStrength: -29.629631
-  gravityScale: 3.0203495
+  GravityStrength: -29.629631
+  GravityScale: 3.0203495
+  FallSpeedMult: 1.5
+  MaxFallSpeed: -30
   RunMaxSpeed: 7
   RunAcceleration: 1
   RunAccelAmount: 7.142857

@@ -23,7 +23,11 @@ namespace Askeladd.Scripts.Player.PlayerLogics
 
         private void FixedUpdate()
         {
-            SetGravityScaleRigidBody(playerDataSO.gravityScale);
+            // set default gravity
+            if (playerRb.velocity.y >= 0f) { SetGravityScaleRigidBody(playerDataSO.GravityScale); return;  }
+
+            IncreaseFallingSpeed();
+            LimitFallingSpeed();
         }
 
         /// <summary>
@@ -31,13 +35,22 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         /// </summary>
         private void SetGravityScaleRigidBody(float scale)
         {
-            #region "not get it"
-
             Vector3 gravity = scale * Physics.gravity;
-
-            #endregion
 
             playerRb.AddForce(gravity, ForceMode.Acceleration);
         }
+
+        private void IncreaseFallingSpeed()
+        {
+            SetGravityScaleRigidBody(playerDataSO.GravityScale * playerDataSO.FallSpeedMult);
+        }
+
+        private void LimitFallingSpeed()
+        {
+            // if the value of playerRb.velocity.y is less than the MaxFallSpeed,
+            // it will still use that value because both values are negative and the smaller negative value is actually larger.
+            // However, when the value of playerRb.velocity.y is greater, it will use the MaxFallSpeed to limit the player's falling speed.
+            playerRb.velocity = new Vector2(playerRb.velocity.x, Mathf.Max(playerRb.velocity.y, playerDataSO.MaxFallSpeed));
+        }    
     }
 }

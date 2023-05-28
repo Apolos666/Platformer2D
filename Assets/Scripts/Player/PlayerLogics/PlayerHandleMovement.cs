@@ -13,19 +13,18 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         [Header("References")]
         [SerializeField]
         private Rigidbody playerRb;
-        private PlayerHandleGravity playerHandleGravity; // To handle gravity
+        [SerializeField]
+        private PlayerStateChecker playerStateChecker;
 
         [Header("Player Settings")]
         [SerializeField]
         private PlayerDataSO playerDataSO;
 
-        [Description("Player States")]
-        public bool p_IsMoving { get; private set; } = false;
-        public bool p_IsFacingRight { get; private set; } = true;
+        // Events 
+        public event Action OnJumping;
 
         private void Awake()
         {
-            playerHandleGravity = GetComponent<PlayerHandleGravity>();
         }
 
         private void Start()
@@ -33,11 +32,16 @@ namespace Askeladd.Scripts.Player.PlayerLogics
             GameInput.Instance.OnJumpingPerformed += GameInput_OnJumpingPerformed;
         }
 
+        
         #region "Events"
 
         private void GameInput_OnJumpingPerformed()
         {
+            if (!playerStateChecker.p_IsGrounded) return;
+
             HandleJumping();
+
+            OnJumping?.Invoke();
         }
 
         #endregion
@@ -45,8 +49,6 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         private void FixedUpdate()
         {
             HandleMovementHorizontal();
-            IsUserMoving();
-            IsFacingRight();
         }
 
         /// <summary>
@@ -96,26 +98,14 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         {
             float jumpForce = playerDataSO.JumpForce;
 
+            // Increase jumpforce if we are falling
+            // This means we'll always feel like we jump the same amount
+            // This realy helpful if we implement double jump or something else
+            if (playerRb.velocity.y <= 0)
+                jumpForce -= playerRb.velocity.y;     
+
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 
-        }
-
-        // Not clean yet
-        private bool IsUserMoving()
-        {
-            p_IsMoving = GameInput.Instance.GetMovementInput2DNormalized().x != 0;
-            return p_IsMoving;
-        }
-
-
-        // Not clean yet
-        private bool IsFacingRight()
-        {
-            if (GameInput.Instance.GetMovementInput2DNormalized().x == 0) return p_IsFacingRight;
-
-            p_IsFacingRight = GameInput.Instance.GetMovementInput2DNormalized().x > 0;
-
-            return p_IsFacingRight;
         }
     }
 }

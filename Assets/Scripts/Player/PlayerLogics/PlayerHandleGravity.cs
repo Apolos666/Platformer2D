@@ -1,3 +1,4 @@
+using Askeladd.Scripts.GameManagers;
 using Askeladd.Scripts.ScriptableObjects;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,8 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         [Header("References")]
         [SerializeField]
         private Rigidbody playerRb;
-        private PlayerHandleMovement playerHandleMovement; // To retrieve the fields from playHandleMovement to adjust gravity accordingly.
+        [SerializeField]
+        private PlayerStateChecker playerStateChecker;
 
         [Header("Player Settings")]
         [SerializeField]
@@ -18,16 +20,26 @@ namespace Askeladd.Scripts.Player.PlayerLogics
 
         private void Awake()
         {
-            playerHandleMovement = GetComponent<PlayerHandleMovement>();
+        }
+
+        private void Update()
+        {
         }
 
         private void FixedUpdate()
         {
-            // set default gravity
-            if (playerRb.velocity.y >= 0f) { SetGravityScaleRigidBody(playerDataSO.GravityScale); return;  }
+            // Increase gravity if the player releases the jump button too early.
+            if (playerRb.velocity.y >= 0f && playerStateChecker.p_isJumpCut) { JumpCut(); return; }
 
+            // set default gravity
+            if (playerRb.velocity.y >= 0f) { SetGravityScaleRigidBody(playerDataSO.GravityScale); return;  }          
+
+            // fast falling speed if player pressing the down key
+            if (GameInput.Instance.GetMovementInput2DNormalized().y < 0) { FastFallingSpeed(); return; }
+                            
+            // Increase falling speed if player are falling
             IncreaseFallingSpeed();
-            LimitFallingSpeed();
+            LimitFallingSpeed(playerDataSO.MaxFallSpeed);          
         }
 
         /// <summary>
@@ -40,17 +52,29 @@ namespace Askeladd.Scripts.Player.PlayerLogics
             playerRb.AddForce(gravity, ForceMode.Acceleration);
         }
 
+        private void FastFallingSpeed()
+        {
+            SetGravityScaleRigidBody(playerDataSO.GravityScale * playerDataSO.FastFallSpeedMult);
+            LimitFallingSpeed(playerDataSO.MaxFastFallSpeed);
+        }
+
         private void IncreaseFallingSpeed()
         {
             SetGravityScaleRigidBody(playerDataSO.GravityScale * playerDataSO.FallSpeedMult);
         }
 
-        private void LimitFallingSpeed()
+        private void JumpCut()
+        {
+            SetGravityScaleRigidBody(playerDataSO.GravityScale * playerDataSO.JumpCutGravityMult);
+            LimitFallingSpeed(playerDataSO.MaxJumpCutGravity);
+        }
+
+        private void LimitFallingSpeed(float limitFallingSpeed)
         {
             // if the value of playerRb.velocity.y is less than the MaxFallSpeed,
             // it will still use that value because both values are negative and the smaller negative value is actually larger.
             // However, when the value of playerRb.velocity.y is greater, it will use the MaxFallSpeed to limit the player's falling speed.
-            playerRb.velocity = new Vector2(playerRb.velocity.x, Mathf.Max(playerRb.velocity.y, playerDataSO.MaxFallSpeed));
+            playerRb.velocity = new Vector2(playerRb.velocity.x, Mathf.Max(playerRb.velocity.y, limitFallingSpeed));
         }    
     }
 }

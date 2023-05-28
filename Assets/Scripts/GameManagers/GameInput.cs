@@ -13,6 +13,7 @@ namespace Askeladd.Scripts.GameManagers
         #region "Events"
 
         public event Action OnJumpingPerformed;
+        public event Action OnJumpingCanceled;
 
         #endregion
 
@@ -35,7 +36,13 @@ namespace Askeladd.Scripts.GameManagers
 
         private void Start()
         {
-            _userInput.Player.Jumping.performed += Jumping_performed;        
+            _userInput.Player.Jumping.performed += Jumping_performed;
+            _userInput.Player.Jumping.canceled += Jumping_canceled;
+        }
+
+        private void Jumping_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            OnJumpingCanceled?.Invoke();
         }
 
         private void Jumping_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -46,6 +53,9 @@ namespace Askeladd.Scripts.GameManagers
         private void OnDestroy()
         {
             _userInput.Dispose();
+
+            _userInput.Player.Jumping.performed -= Jumping_performed;
+            _userInput.Player.Jumping.canceled -= Jumping_canceled;
         }
 
         /// <summary>

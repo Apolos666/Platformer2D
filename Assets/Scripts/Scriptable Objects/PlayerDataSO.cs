@@ -13,6 +13,8 @@ namespace Askeladd.Scripts.ScriptableObjects
                                                      // Also the value the player's rigidbody2D.gravityScale is set to.
         public float FallSpeedMult; // Mult with gravity when velocity < 0 to increase falling speed
         public float MaxFallSpeed; // Limit falling speed
+        public float FastFallSpeedMult; // Mult with gravity when velocity < 0 and player.moveDir.y < 0 to fast fall
+        public float MaxFastFallSpeed; // Limit fast falling speed
 
         [Header("Movement horizontal")]
         public float RunMaxSpeed; // Target speed we want the player to reach
@@ -25,6 +27,8 @@ namespace Askeladd.Scripts.ScriptableObjects
         public float JumpHeight; // Height of the player's jump
         public float JumpTimeToApex; // Time between jump force and reaching the desire jump height. These values also control the player's gravity and jump force.
         [HideInInspector] public float JumpForce; //The actual force applied (upwards) to the player when they jump.
+        public float JumpCutGravityMult; // Increase graivity if player release jump button while jumping
+        public float MaxJumpCutGravity; // Limit jump cut gravity
 
         private void OnValidate()
         {        

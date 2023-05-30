@@ -11,10 +11,15 @@ namespace Askeladd.Scripts.ScriptableObjects
         [HideInInspector] public float GravityStrength; // Downwards force (gravity) needed for the desired jumpHeight and jumpTimeToApex.
         [HideInInspector] public float GravityScale; // Strength of the player's gravity as a multiplier of gravity (set in ProjectSettings/Physics).
                                                      // Also the value the player's rigidbody2D.gravityScale is set to.
+        [Space(20)]
         public float FallSpeedMult; // Mult with gravity when velocity < 0 to increase falling speed
         public float MaxFallSpeed; // Limit falling speed
+        [Space(20)]
         public float FastFallSpeedMult; // Mult with gravity when velocity < 0 and player.moveDir.y < 0 to fast fall
         public float MaxFastFallSpeed; // Limit fast falling speed
+        [Space(20)]
+        [Range(0f, 1f)]
+        public float JumpHangGravityMult; // Reduce gravity while close to the apex of the jump
 
         [Header("Movement horizontal")]
         public float RunMaxSpeed; // Target speed we want the player to reach
@@ -22,13 +27,23 @@ namespace Askeladd.Scripts.ScriptableObjects
         [HideInInspector] public float RunAccelAmount; // This variable is intended to adjust the acceleration level to adapt RunMaxSpeed.
         public float RunDecceleration; // The speed at which our player decceleration to from current speed, can be set to runMaxSpeed for instant deceleration down to 0 for none at all
         [HideInInspector] public float RunDeccelAmount; // This variable is intended to adjust the decceleration level to adapt RunMaxSpeed.
-
+        
         [Header("Jumping")]
         public float JumpHeight; // Height of the player's jump
         public float JumpTimeToApex; // Time between jump force and reaching the desire jump height. These values also control the player's gravity and jump force.
         [HideInInspector] public float JumpForce; //The actual force applied (upwards) to the player when they jump.
+        [Space(20)]
         public float JumpCutGravityMult; // Increase graivity if player release jump button while jumping
         public float MaxJumpCutGravity; // Limit jump cut gravity
+        [Space(20)]
+        public float JumpHangTimeThreshold; // Speeds (close to 0) where the player will experience extra "jump hang".
+                                            // The player's velocity.y is closest to 0 at the jump's apex
+        public float JumpHangAccelerationMult; // Increase acceleration while close to the peek of the jump 
+        public float JumpHangMaxSpeedMult; // Increase max speed while close to the peek of the jump
+
+        [Header("Assists")]
+        [Range(0.01f, 0.5f)] public float CoyoteTime; // Grace period after falling off a platform, where you can still jump
+        [Range(0.01f, 0.5f)] public float JumpInputBufferTime; // Grace period after pressing jump where a jump will be automatically performed 
 
         private void OnValidate()
         {        

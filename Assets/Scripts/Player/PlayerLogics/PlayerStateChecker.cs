@@ -1,4 +1,5 @@
 using Askeladd.Scripts.GameManagers;
+using Askeladd.Scripts.ScriptableObjects;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +13,11 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         [SerializeField]
         private PlayerHandleMovement playerHandleMovement;
         [SerializeField]
+        private PlayerTimeTracker playerTimeTracker;
+        [SerializeField]
         private Rigidbody playerRb;
+        [SerializeField]
+        private PlayerDataSO playerDataSO;
 
         [Header("Transform Check Points")]
         [SerializeField]
@@ -69,7 +74,7 @@ namespace Askeladd.Scripts.Player.PlayerLogics
             GroundCheckOverLapBox();
             IsUserMoving();
             CheckJumpingStatus();
-        }
+        }    
 
         private void ClearArray(System.Array array, int index, int arrayLength)
         {
@@ -114,7 +119,6 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         /// <summary>
         /// Check which direction the user is facing, if there is a change in direction, then trigger an event.
         /// </summary>
-        /// <returns></returns>
         public bool IsFacingRight()
         {
             if (GameInput.Instance.GetMovementInput2DNormalized().x == 0) return p_isFacingRight;
@@ -131,7 +135,6 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         /// <summary>
         /// If the player presses any movement button and Grounded, then p_isUserMoving is set to true; otherwise, it is set to false
         /// </summary>
-        /// <returns></returns>
         private bool IsUserMoving()
         {
             p_isUserMoving = p_IsGrounded && GameInput.Instance.GetMovementInput2DNormalized().x != 0;
@@ -139,6 +142,18 @@ namespace Askeladd.Scripts.Player.PlayerLogics
             return p_isUserMoving;
         }
 
+        /// <summary>
+        /// You can only jump when you are on the ground and the player is not in a jumping state.
+        /// </summary>
+        public bool CanJump()
+        {
+            return playerTimeTracker.p_lastOnGroundedTime > 0 && !p_isJumping;
+        }
+
+        /// <summary>
+        /// You can only jump cut when you are velocity.y greater than 0 and player is in a jumping state.
+        /// </summary>
+        /// <returns></returns>
         private bool CanJumpCut()
         {
             return playerRb.velocity.y > 0 && p_isJumping;

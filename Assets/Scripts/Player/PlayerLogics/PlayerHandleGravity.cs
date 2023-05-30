@@ -18,25 +18,21 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         [SerializeField]
         private PlayerDataSO playerDataSO;
 
-        private void Awake()
-        {
-        }
-
-        private void Update()
-        {
-        }
-
         private void FixedUpdate()
         {
             // Increase gravity if the player releases the jump button too early.
             if (playerRb.velocity.y >= 0f && playerStateChecker.p_isJumpCut) { JumpCut(); return; }
+
+            // Reduce gravity while close to peek of jump
+            if (( playerStateChecker.p_isJumping || playerStateChecker.p_isFalling ) 
+                && Mathf.Abs(playerRb.velocity.y) < playerDataSO.JumpHangTimeThreshold ) { JumpHang(); return; }
 
             // set default gravity
             if (playerRb.velocity.y >= 0f) { SetGravityScaleRigidBody(playerDataSO.GravityScale); return;  }          
 
             // fast falling speed if player pressing the down key
             if (GameInput.Instance.GetMovementInput2DNormalized().y < 0) { FastFallingSpeed(); return; }
-                            
+
             // Increase falling speed if player are falling
             IncreaseFallingSpeed();
             LimitFallingSpeed(playerDataSO.MaxFallSpeed);          
@@ -50,6 +46,11 @@ namespace Askeladd.Scripts.Player.PlayerLogics
             Vector3 gravity = scale * Physics.gravity;
 
             playerRb.AddForce(gravity, ForceMode.Acceleration);
+        }
+
+        private void JumpHang()
+        {
+            SetGravityScaleRigidBody(playerDataSO.GravityScale * playerDataSO.JumpHangGravityMult);
         }
 
         private void FastFallingSpeed()

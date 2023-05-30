@@ -239,6 +239,7 @@ GameObject:
   - component: {fileID: 406894644}
   - component: {fileID: 406894645}
   - component: {fileID: 406894646}
+  - component: {fileID: 406894647}
   m_Layer: 0
   m_Name: Player_Logic
   m_TagString: Untagged
@@ -275,6 +276,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerRb: {fileID: 1226804350}
   playerStateChecker: {fileID: 1900965269}
+  playerTimeTracker: {fileID: 406894647}
   playerDataSO: {fileID: 11400000, guid: 2600021921acd714dbf251c89729e1e5, type: 2}
 --- !u!114 &406894646
 MonoBehaviour:
@@ -289,6 +291,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerRb: {fileID: 1226804350}
+  playerStateChecker: {fileID: 1900965269}
+  playerDataSO: {fileID: 11400000, guid: 2600021921acd714dbf251c89729e1e5, type: 2}
+--- !u!114 &406894647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 406894643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4f36cc86a697a945a7da1287bcc0c4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   playerStateChecker: {fileID: 1900965269}
   playerDataSO: {fileID: 11400000, guid: 2600021921acd714dbf251c89729e1e5, type: 2}
 --- !u!1 &705507993
@@ -644,7 +660,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 72
+  m_Constraints: 88
   m_CollisionDetection: 1
 --- !u!136 &1226804351
 CapsuleCollider:
@@ -1018,7 +1034,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerHandleMovement: {fileID: 406894645}
+  playerTimeTracker: {fileID: 406894647}
   playerRb: {fileID: 1226804350}
+  playerDataSO: {fileID: 11400000, guid: 2600021921acd714dbf251c89729e1e5, type: 2}
   groundCheckTransform: {fileID: 1192005563}
   groundCheckSize: {x: 0.6, y: 0.15, z: 0}
   groundLayer:

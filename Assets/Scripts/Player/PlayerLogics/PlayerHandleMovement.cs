@@ -15,6 +15,8 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         private Rigidbody playerRb;
         [SerializeField]
         private PlayerStateChecker playerStateChecker;
+        [SerializeField]
+        private PlayerTimeTracker playerTimeTracker;
 
         [Header("Player Settings")]
         [SerializeField]
@@ -23,28 +25,36 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         // Events 
         public event Action OnJumping;
 
-        private void Awake()
-        {
-        }
-
         private void Start()
         {
-            GameInput.Instance.OnJumpingPerformed += GameInput_OnJumpingPerformed;
+            // Need to change
+            //GameInput.Instance.OnJumpingPerformed += GameInput_OnJumpingPerformed;
         }
 
         
-        #region "Events"
+        #region "Events || Need to change"
 
-        private void GameInput_OnJumpingPerformed()
-        {
-            if (!playerStateChecker.p_IsGrounded) return;
+        //private void GameInput_OnJumpingPerformed()
+        //{
+        //    if (!playerStateChecker.p_IsGrounded) return;
 
-            HandleJumping();
+        //    HandleJumping();
 
-            OnJumping?.Invoke();
-        }
+        //    OnJumping?.Invoke();
+        //}
 
         #endregion
+
+        // Need to change
+        private void Update()
+        {
+            if (playerStateChecker.CanJump() && playerTimeTracker.p_lastPressedJumpTime > 0)
+            {
+                HandleJumping();
+
+                OnJumping?.Invoke();
+            }
+        }
 
         private void FixedUpdate()
         {
@@ -76,6 +86,17 @@ namespace Askeladd.Scripts.Player.PlayerLogics
 
             #endregion
 
+            #region Add Bonus Jump Peek Acceleration
+            
+            if (( playerStateChecker.p_isJumping || playerStateChecker.p_isFalling) 
+                && MathF.Abs(playerRb.velocity.y) < playerDataSO.JumpHangTimeThreshold)
+            {
+                targetSpeed *= playerDataSO.JumpHangMaxSpeedMult;
+                accelRate *= playerDataSO.JumpHangAccelerationMult;
+            }
+
+            #endregion
+
             #region "Apply the missing force"
 
             // Calculates the current velocity vs targetSpeed
@@ -96,6 +117,9 @@ namespace Askeladd.Scripts.Player.PlayerLogics
 
         private void HandleJumping()
         {
+            // need to change
+            playerTimeTracker.SetDefaultValue();
+
             float jumpForce = playerDataSO.JumpForce;
 
             // Increase jumpforce if we are falling

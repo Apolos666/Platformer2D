@@ -14,6 +14,8 @@ namespace Askeladd.Scripts.GameManagers
 
         public event Action OnJumpingPerformed;
         public event Action OnJumpingCanceled;
+        public event Action OnCrouchPerformed;
+        public event Action OnCrouchCanceled;
 
         #endregion
 
@@ -38,6 +40,18 @@ namespace Askeladd.Scripts.GameManagers
         {
             _userInput.Player.Jumping.performed += Jumping_performed;
             _userInput.Player.Jumping.canceled += Jumping_canceled;
+            _userInput.Player.Crouch.performed += Crouch_performed;
+            _userInput.Player.Crouch.canceled += Crouch_canceled;
+        }
+
+        private void Crouch_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            OnCrouchCanceled?.Invoke();
+        }
+
+        private void Crouch_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            OnCrouchPerformed?.Invoke();
         }
 
         private void Jumping_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -56,6 +70,8 @@ namespace Askeladd.Scripts.GameManagers
 
             _userInput.Player.Jumping.performed -= Jumping_performed;
             _userInput.Player.Jumping.canceled -= Jumping_canceled;
+            _userInput.Player.Crouch.performed -= Crouch_performed;
+            _userInput.Player.Crouch.canceled -= Crouch_canceled;
         }
 
         /// <summary>

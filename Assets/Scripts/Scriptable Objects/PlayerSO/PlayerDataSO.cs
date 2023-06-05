@@ -7,11 +7,19 @@ namespace Askeladd.Scripts.ScriptableObjects.PlayerSO
     [CreateAssetMenu(fileName = "Player Data", menuName = "Player/Player Data")]
     public class PlayerDataSO : ScriptableObject
     {
+        [Header("Collider")]
+        public Vector3 ColliderCenterNormalState; // The normal "Center" position of the collider.
+        public float ColliderRadiusNormalState; // The normal "Radius" value of the collider.
+        public float ColliderHeightNormalState; // The normal "Height" value of the collider.
+        public Vector3 ColliderCenterCrouchState; // The crouch "Center" position of the collider. 
+        public float ColliderRadiusCrouchState; // The crouch "Radius" value of the collider.
+        public float ColliderHeightCrouchState; // The crouch "Height" value of the collider.
+
         [Header("Gravity")]
         [HideInInspector] public float GravityStrength; // Downwards force (gravity) needed for the desired jumpHeight and jumpTimeToApex.
         [HideInInspector] public float GravityScale; // Strength of the player's gravity as a multiplier of gravity (set in ProjectSettings/Physics).
                                                      // Also the value the player's rigidbody2D.gravityScale is set to.
-        [Space(20)]
+        [Header("Gravity")]
         public float FallSpeedMult; // Mult with gravity when velocity < 0 to increase falling speed
         public float MaxFallSpeed; // Limit falling speed
         [Space(20)]

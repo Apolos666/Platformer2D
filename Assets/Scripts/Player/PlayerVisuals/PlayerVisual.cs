@@ -57,7 +57,9 @@ namespace Askeladd.Scripts.Player.PlayerVisuals
 
             if (playerStateChecker.p_isFalling) return playerAnimationNameSO.PlayerFalling;
 
-            if (playerStateChecker.p_IsGrounded && playerStateChecker.p_isUserMoving) return playerAnimationNameSO.PlayerMoving;
+            if (playerStateChecker.p_isCrouching) return playerAnimationNameSO.PlayerCrouching;
+
+            if (playerStateChecker.p_isUserMoving) return playerAnimationNameSO.PlayerMoving;
 
             return playerAnimationNameSO.PlayerIdle; 
 

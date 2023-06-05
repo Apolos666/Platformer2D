@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb3143093691fb24f958f900ee577dc0, type: 3}
   m_Name: Player Data
   m_EditorClassIdentifier: 
+  ColliderCenterNormalState: {x: 0.017466545, y: -0.13612366, z: 0}
+  ColliderRadiusNormalState: 0.3206639
+  ColliderHeightNormalState: 1.235661
+  ColliderCenterCrouchState: {x: 0.017466545, y: -0.3200221, z: 0}
+  ColliderRadiusCrouchState: 0.3206639
+  ColliderHeightCrouchState: 0.8678637
   GravityStrength: -29.629631
   GravityScale: 3.0203495
   FallSpeedMult: 1.5
@@ -33,4 +39,4 @@ MonoBehaviour:
   JumpHangAccelerationMult: 1.1
   JumpHangMaxSpeedMult: 1.3
   CoyoteTime: 0.157
-  JumpInputBufferTime: 0.155
+  JumpInputBufferTime: 0.1

@@ -36,7 +36,9 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         public bool p_isFacingRight { get; private set; } = true;
         private bool _previousIsFacingRight;
 
+        public bool p_isCanMove { get; private set; } = true;
         public bool p_isUserMoving { get; private set; } = false;
+        public bool p_isCrouching { get; private set; } = false;
 
         public bool p_isJumping { get; private set; } = false;
         public bool p_isFalling { get; private set; } = false;
@@ -52,9 +54,28 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         {
             GameInput.Instance.OnJumpingCanceled += GameInput_OnJumpingCanceled;
             playerHandleMovement.OnJumping += PlayerHandleMovement_OnJumping;
+            playerHandleMovement.OnCrouch += PlayerHandleMovement_OnCrouch;
+            playerHandleMovement.OnUnCrouch += PlayerHandleMovement_OnUnCrouch;
         }
 
         #region "Events"
+
+        private void PlayerHandleMovement_OnUnCrouch()
+        {
+            p_isCrouching = false;
+            p_isCanMove = true;
+        }
+
+        private void PlayerHandleMovement_OnCrouch()
+        {
+            if (!p_IsGrounded) return;
+
+            playerRb.velocity = Vector3.zero;
+            p_isCrouching = true;
+            p_isCanMove = false;
+        }
+
+        
         private void PlayerHandleMovement_OnJumping()
         {
             p_isJumping = true;
@@ -137,7 +158,7 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         /// </summary>
         private bool IsUserMoving()
         {
-            p_isUserMoving = p_IsGrounded && GameInput.Instance.GetMovementInput2DNormalized().x != 0;
+            p_isUserMoving = p_IsGrounded && GameInput.Instance.GetMovementInput2DNormalized().x != 0 && playerRb.velocity.x != 0;
 
             return p_isUserMoving;
         }

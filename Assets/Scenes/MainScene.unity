@@ -381,6 +381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerRb: {fileID: 1226804350}
+  playerCapsuleCollider: {fileID: 1226804351}
   playerStateChecker: {fileID: 1900965269}
   playerTimeTracker: {fileID: 406894647}
   playerDataSO: {fileID: 11400000, guid: 2600021921acd714dbf251c89729e1e5, type: 2}

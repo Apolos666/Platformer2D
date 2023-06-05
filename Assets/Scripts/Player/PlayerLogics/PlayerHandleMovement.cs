@@ -14,6 +14,8 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         [SerializeField]
         private Rigidbody playerRb;
         [SerializeField]
+        private CapsuleCollider playerCapsuleCollider;
+        [SerializeField]
         private PlayerStateChecker playerStateChecker;
         [SerializeField]
         private PlayerTimeTracker playerTimeTracker;
@@ -24,14 +26,32 @@ namespace Askeladd.Scripts.Player.PlayerLogics
 
         // Events 
         public event Action OnJumping;
+        public event Action OnCrouch;
+        public event Action OnUnCrouch;
 
         private void Start()
         {
             // Need to change
             //GameInput.Instance.OnJumpingPerformed += GameInput_OnJumpingPerformed;
+            GameInput.Instance.OnCrouchPerformed += GameInput_OnCrouchPerformed;
+            GameInput.Instance.OnCrouchCanceled += GameInput_OnCrouchCanceled;
         }
 
-        
+        private void GameInput_OnCrouchCanceled()
+        {
+            HandleCrouch(playerDataSO.ColliderCenterNormalState, playerDataSO.ColliderRadiusNormalState, playerDataSO.ColliderHeightNormalState);
+
+            OnUnCrouch?.Invoke();
+        }
+
+        private void GameInput_OnCrouchPerformed()
+        {
+            OnCrouch?.Invoke();
+
+            HandleCrouch(playerDataSO.ColliderCenterCrouchState, playerDataSO.ColliderRadiusCrouchState, playerDataSO.ColliderHeightCrouchState);         
+        }
+
+
         #region "Events || Need to change"
 
         //private void GameInput_OnJumpingPerformed()
@@ -58,6 +78,8 @@ namespace Askeladd.Scripts.Player.PlayerLogics
 
         private void FixedUpdate()
         {
+            if (!playerStateChecker.p_isCanMove) return;
+
             HandleMovementHorizontal();
         }
 
@@ -130,6 +152,15 @@ namespace Askeladd.Scripts.Player.PlayerLogics
 
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 
+        }
+
+        private void HandleCrouch(Vector3 center, float radius, float height)
+        {
+            if (!playerStateChecker.p_isCrouching) return;
+
+            playerCapsuleCollider.center = center;
+            playerCapsuleCollider.radius = radius;
+            playerCapsuleCollider.height = height;
         }
     }
 }

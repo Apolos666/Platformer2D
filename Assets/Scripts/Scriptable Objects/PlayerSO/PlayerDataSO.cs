@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Askeladd.Scripts.ScriptableObjects
+namespace Askeladd.Scripts.ScriptableObjects.PlayerSO
 {
-    [CreateAssetMenu(menuName = "Player Data")]
+    [CreateAssetMenu(fileName = "Player Data", menuName = "Player/Player Data")]
     public class PlayerDataSO : ScriptableObject
     {
         [Header("Gravity")]
@@ -61,7 +61,7 @@ namespace Askeladd.Scripts.ScriptableObjects
             // gravityScale * physics.gravity.y = gravityStrength, This step calculates the ratio number that will be multiplied by physics.gravity.y to achieve the desired gravity in the game
             GravityScale = GravityStrength / Physics.gravity.y;
 
-            #region "not get it"
+            
             // Calculate are run acceleration & deceleration forces using formula: amount = ((1 / Time.fixedDeltaTime) * acceleration) / runMaxSpeed
             // The formula is used to calculate the acceleration increase by applying a coefficient divided by the maximum level, thus generating a relative acceleration level for the object(e.g., 0.7).This allows the object to gradually increase its speed using the relative acceleration value over time, rather than instantaneously.
             RunAccelAmount = (50 * RunAcceleration) / RunMaxSpeed;  
@@ -70,7 +70,6 @@ namespace Askeladd.Scripts.ScriptableObjects
             // Calculate jumpForce using the formula (initialJumpVelocity = gravity * timeToJumpApex)
             // using the formula Accelerated Motion Equations (v = u + gt) v = 0, u = JumpForce
             JumpForce = Mathf.Abs(GravityStrength) * JumpTimeToApex;
-            #endregion
         }
     }
 

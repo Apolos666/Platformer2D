@@ -1,5 +1,5 @@
 using Askeladd.Scripts.GameManagers;
-using Askeladd.Scripts.ScriptableObjects;
+using Askeladd.Scripts.ScriptableObjects.PlayerSO;
 using System;
 using System.Collections;
 using System.Collections.Generic;

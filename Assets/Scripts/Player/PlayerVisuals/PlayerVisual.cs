@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Askeladd.Scripts.Player.PlayerLogics;
+using Askeladd.Scripts.ScriptableObjects.PlayerSO;
 
 namespace Askeladd.Scripts.Player.PlayerVisuals
 {
@@ -15,8 +16,13 @@ namespace Askeladd.Scripts.Player.PlayerVisuals
         private PlayerStateChecker playerStateChecker;
         [SerializeField]
         private Transform player;
+        [SerializeField]
+        private PlayerAnimationNameSO playerAnimationNameSO;
+        private Animator _animator;
 
-        private Animator _animator;      
+        // Animation
+        private int _currentState;
+        private float _lockedTill;
 
         private void Awake()
         {
@@ -35,7 +41,31 @@ namespace Askeladd.Scripts.Player.PlayerVisuals
 
         private void Update()
         {
-            SetAnimation();          
+            var state = GetState();
+
+            if (state == _currentState) return;
+
+            _animator.CrossFade(state, 0, 0);
+            _currentState = state;
+        }
+
+        private int GetState()
+        {
+            if (Time.time < _lockedTill) return _currentState;
+
+            if (playerStateChecker.p_isJumping) return playerAnimationNameSO.PlayerJumping;
+
+            if (playerStateChecker.p_isFalling) return playerAnimationNameSO.PlayerFalling;
+
+            if (playerStateChecker.p_IsGrounded && playerStateChecker.p_isUserMoving) return playerAnimationNameSO.PlayerMoving;
+
+            return playerAnimationNameSO.PlayerIdle; 
+
+            int LockState(int s, float t)
+            {
+                _lockedTill = Time.time + t;
+                return s;
+            }
         }
 
         private void TurnCharacter()
@@ -45,11 +75,6 @@ namespace Askeladd.Scripts.Player.PlayerVisuals
             Quaternion targetRotation = Quaternion.FromToRotation(Vector3.right, lookDirection);
 
             player.rotation = targetRotation;
-        }
-
-        private void SetAnimation()
-        {
-            _animator.SetBool(IS_PLAYER_MOVING, playerStateChecker.p_isUserMoving);
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Askeladd.Scripts.GameManagers
         public event Action OnJumpingCanceled;
         public event Action OnCrouchPerformed;
         public event Action OnCrouchCanceled;
+        public event Action OnNormalAttackPerformed;
+        public event Action OnHeavyAttackPerformed;
 
         #endregion
 
@@ -42,6 +44,18 @@ namespace Askeladd.Scripts.GameManagers
             _userInput.Player.Jumping.canceled += Jumping_canceled;
             _userInput.Player.Crouch.performed += Crouch_performed;
             _userInput.Player.Crouch.canceled += Crouch_canceled;
+            _userInput.Player.NormalAttack.performed += NormalAttack_performed;
+            _userInput.Player.HeavyAttack.performed += HeavyAttack_performed;
+        }
+
+        private void HeavyAttack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            OnHeavyAttackPerformed?.Invoke();
+        }
+
+        private void NormalAttack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            OnNormalAttackPerformed?.Invoke();
         }
 
         private void Crouch_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -72,6 +86,8 @@ namespace Askeladd.Scripts.GameManagers
             _userInput.Player.Jumping.canceled -= Jumping_canceled;
             _userInput.Player.Crouch.performed -= Crouch_performed;
             _userInput.Player.Crouch.canceled -= Crouch_canceled;
+            _userInput.Player.NormalAttack.performed -= NormalAttack_performed;
+            _userInput.Player.HeavyAttack.performed -= HeavyAttack_performed;
         }
 
         /// <summary>

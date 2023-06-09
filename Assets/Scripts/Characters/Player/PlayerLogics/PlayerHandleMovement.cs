@@ -6,7 +6,7 @@ using UnityEngine;
 using System.ComponentModel;
 using System;
 
-namespace Askeladd.Scripts.Player.PlayerLogics
+namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 {
     public class PlayerHandleMovement : MonoBehaviour
     {

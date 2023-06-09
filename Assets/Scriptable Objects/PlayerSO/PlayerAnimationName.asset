@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dcb9deb215721d4399bfdcee1f9422c, type: 3}
   m_Name: PlayerAnimationName
   m_EditorClassIdentifier: 
+  NormalAttackAnimTime: 0.5
+  HeavyAttackAnimTime: 0.7

@@ -12,5 +12,10 @@ namespace Askeladd.Scripts.ScriptableObjects.PlayerSO
         public readonly int PlayerJumping = Animator.StringToHash("Player_Jumping");
         public readonly int PlayerFalling = Animator.StringToHash("Player_Falling");
         public readonly int PlayerCrouching = Animator.StringToHash("Player_Crouching");
+        public readonly int PlayerNormalAttack = Animator.StringToHash("Player_Normal_Attack");
+        public readonly int PlayerHeavyAttack = Animator.StringToHash("Player_Heavy_Attack");
+
+        public float NormalAttackAnimTime;
+        public float HeavyAttackAnimTime;
     }
 }

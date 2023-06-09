@@ -1,11 +1,11 @@
 using Askeladd.Scripts.GameManagers;
+using Askeladd.Scripts.GeneralScripts;
 using Askeladd.Scripts.ScriptableObjects.PlayerSO;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
-namespace Askeladd.Scripts.Player.PlayerLogics
+namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 {
     public class PlayerStateChecker : MonoBehaviour
     {
@@ -14,6 +14,8 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         private PlayerHandleMovement playerHandleMovement;
         [SerializeField]
         private PlayerTimeTracker playerTimeTracker;
+        [SerializeField]
+        private PlayerHandleCombat playerHandleCombat;
         [SerializeField]
         private Rigidbody playerRb;
         [SerializeField]
@@ -33,17 +35,31 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         public event Action OnDirChanged;
 
         // Player states
+        [field:Header("Player States")]
+        [field:SerializeField] 
         public bool p_isFacingRight { get; private set; } = true;
         private bool _previousIsFacingRight;
 
+        [field: SerializeField] 
         public bool p_isCanMove { get; private set; } = true;
+        [field: SerializeField] 
         public bool p_isUserMoving { get; private set; } = false;
+        [field: SerializeField] 
         public bool p_isCrouching { get; private set; } = false;
 
+        [field: SerializeField] 
         public bool p_isJumping { get; private set; } = false;
+        [field: SerializeField] 
         public bool p_isFalling { get; private set; } = false;
-        public bool p_isJumpCut { get; private set; } 
+        [field: SerializeField] 
+        public bool p_isJumpCut { get; private set; }
 
+        [field: SerializeField] 
+        public bool p_isNormalAttack { get; private set; } = false;
+        [field: SerializeField] 
+        public bool p_isHeavyAttack { get; private set; } = false;
+
+        [field: SerializeField] 
         public bool p_IsGrounded { get; private set; }
         
 
@@ -56,9 +72,37 @@ namespace Askeladd.Scripts.Player.PlayerLogics
             playerHandleMovement.OnJumping += PlayerHandleMovement_OnJumping;
             playerHandleMovement.OnCrouch += PlayerHandleMovement_OnCrouch;
             playerHandleMovement.OnUnCrouch += PlayerHandleMovement_OnUnCrouch;
+            playerHandleCombat.OnNormalAttack += PlayerHandleCombat_OnNormalAttack;
+            playerHandleCombat.OnHeavyAttack += PlayerHandleCombat_OnHeavyAttack;
+            playerHandleCombat.OnNotAttack += PlayerHandleCombat_OnNotAttack;
         }
 
         #region "Events"
+
+        private void PlayerHandleCombat_OnNotAttack()
+        {
+            StartCoroutine(WaitForStunned(() => 
+            {
+                p_isCanMove = true;
+            }));
+
+            p_isNormalAttack = false;
+            p_isHeavyAttack = false;
+        }
+      
+        private void PlayerHandleCombat_OnHeavyAttack()
+        {
+            playerRb.velocity = Vector3.zero;
+            p_isHeavyAttack = true;
+            p_isCanMove = false;
+        }
+
+        private void PlayerHandleCombat_OnNormalAttack()
+        {
+            playerRb.velocity = Vector3.zero;
+            p_isNormalAttack = true;
+            p_isCanMove = false;
+        }
 
         private void PlayerHandleMovement_OnUnCrouch()
         {
@@ -97,9 +141,11 @@ namespace Askeladd.Scripts.Player.PlayerLogics
             CheckJumpingStatus();
         }    
 
-        private void ClearArray(System.Array array, int index, int arrayLength)
+        IEnumerator WaitForStunned(Action OnCompleted)
         {
-            System.Array.Clear(array, index, arrayLength);
+            yield return new WaitForSeconds(playerDataSO.StunnedAfterSwingTime);
+
+            OnCompleted?.Invoke();
         }
 
         /// <summary>
@@ -109,7 +155,7 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         private void GroundCheckOverLapBox()
         {
             // Clear the previous array and then assign new values to that array.
-            ClearArray(groundColliders, 0, groundColliders.Length);
+            CommonFunctions.ClearArray(groundColliders, 0, groundColliders.Length);
 
             Physics.OverlapBoxNonAlloc(groundCheckTransform.position, groundCheckSize / 2, groundColliders, Quaternion.identity, groundLayer);
 

@@ -1,10 +1,8 @@
 using Askeladd.Scripts.GameManagers;
 using Askeladd.Scripts.ScriptableObjects.PlayerSO;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Askeladd.Scripts.Player.PlayerLogics
+namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 {
     public class PlayerHandleGravity : MonoBehaviour
     {

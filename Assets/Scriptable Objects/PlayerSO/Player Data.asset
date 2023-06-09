@@ -38,5 +38,9 @@ MonoBehaviour:
   JumpHangTimeThreshold: 0.5
   JumpHangAccelerationMult: 1.1
   JumpHangMaxSpeedMult: 1.3
+  NormalAttackCoolDown: 0.5
+  HeavyAttackCoolDown: 0.7
+  NormalAttackDamage: 20
+  HeavyAttackDamage: 50
   CoyoteTime: 0.157
   JumpInputBufferTime: 0.1

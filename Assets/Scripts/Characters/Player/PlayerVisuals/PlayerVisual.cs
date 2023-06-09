@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Askeladd.Scripts.Player.PlayerLogics;
+using Askeladd.Scripts.Characters.Player.PlayerLogics;
 using Askeladd.Scripts.ScriptableObjects.PlayerSO;
+using System;
 
-namespace Askeladd.Scripts.Player.PlayerVisuals
+namespace Askeladd.Scripts.Characters.Player.PlayerVisuals
 {
     public class PlayerVisual : MonoBehaviour
     {
@@ -23,6 +24,14 @@ namespace Askeladd.Scripts.Player.PlayerVisuals
         // Animation
         private int _currentState;
         private float _lockedTill;
+
+        // Events
+        public event EventHandler<OnLockedTillChangedEventArgs> OnLockedTillChanged;
+
+        public class OnLockedTillChangedEventArgs : EventArgs
+        {
+            public float LockedTill;
+        }
 
         private void Awake()
         {
@@ -57,6 +66,10 @@ namespace Askeladd.Scripts.Player.PlayerVisuals
 
             if (playerStateChecker.p_isFalling) return playerAnimationNameSO.PlayerFalling;
 
+            if (playerStateChecker.p_isNormalAttack) return LockState(playerAnimationNameSO.PlayerNormalAttack, playerAnimationNameSO.NormalAttackAnimTime);
+
+            if (playerStateChecker.p_isHeavyAttack) return LockState(playerAnimationNameSO.PlayerHeavyAttack, playerAnimationNameSO.HeavyAttackAnimTime);
+
             if (playerStateChecker.p_isCrouching) return playerAnimationNameSO.PlayerCrouching;
 
             if (playerStateChecker.p_isUserMoving) return playerAnimationNameSO.PlayerMoving;
@@ -66,6 +79,12 @@ namespace Askeladd.Scripts.Player.PlayerVisuals
             int LockState(int s, float t)
             {
                 _lockedTill = Time.time + t;
+
+                OnLockedTillChanged?.Invoke(this, new OnLockedTillChangedEventArgs
+                {
+                    LockedTill = _lockedTill
+                });
+
                 return s;
             }
         }

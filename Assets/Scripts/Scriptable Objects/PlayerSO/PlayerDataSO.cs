@@ -47,7 +47,14 @@ namespace Askeladd.Scripts.ScriptableObjects.PlayerSO
         public float JumpHangTimeThreshold; // Speeds (close to 0) where the player will experience extra "jump hang".
                                             // The player's velocity.y is closest to 0 at the jump's apex
         public float JumpHangAccelerationMult; // Increase acceleration while close to the peek of the jump 
-        public float JumpHangMaxSpeedMult; // Increase max speed while close to the peek of the jump
+        public float JumpHangMaxSpeedMult; // Increase max speed while close to the peek of the jump 
+
+        [Header("Combat")]
+        public float NormalAttackCoolDown; // The next time the player can perform a normal attack is when the cooldown period is over
+        public float HeavyAttackCoolDown; // The next time the player can perform a heavy attack is when the cooldown period is over
+        public float NormalAttackDamage; // The damage player does to the enemy
+        public float HeavyAttackDamage; // The damage player does to the enemy
+        public float StunnedAfterSwingTime; // The duration player being stunned after swing sword
 
         [Header("Assists")]
         [Range(0.01f, 0.5f)] public float CoyoteTime; // Grace period after falling off a platform, where you can still jump

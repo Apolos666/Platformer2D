@@ -1,16 +1,16 @@
 using Askeladd.Scripts.GameManagers;
 using Askeladd.Scripts.ScriptableObjects.PlayerSO;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Askeladd.Scripts.Player.PlayerLogics
+namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 {
     public class PlayerTimeTracker : MonoBehaviour
     {
         [Header("References")]
         [SerializeField]
         private PlayerStateChecker playerStateChecker;
+        [SerializeField]
+        private PlayerHandleCombat playerHandleCombat;
         [SerializeField]
         private PlayerDataSO playerDataSO;
 
@@ -19,13 +19,31 @@ namespace Askeladd.Scripts.Player.PlayerLogics
                                                  // the value is smaller than 0.
         public float p_lastPressedJumpTime { get; private set; } = 0f; // If the player pressed jump button, the value is greater than 0; otherwise,
                                                                        // the value is smaller than 0.
+        [field:SerializeField]
+        public float p_attackCoolDown { get; private set; } = 0f; // If the attack cooldown is complete, the player can perform the attack function
 
         private void Start()
         {
             GameInput.Instance.OnJumpingPerformed += GameInput_OnJumpingPerformed;
+            playerHandleCombat.OnNormalAttack += PlayerHandleCombat_OnNormalAttack;
+            playerHandleCombat.OnHeavyAttack += PlayerHandleCombat_OnHeavyAttack;
         }
 
         #region "Events"
+
+        private void PlayerHandleCombat_OnHeavyAttack()
+        {
+            p_attackCoolDown = 0;
+
+            p_attackCoolDown += playerDataSO.HeavyAttackCoolDown;
+        }
+
+        private void PlayerHandleCombat_OnNormalAttack()
+        {
+            p_attackCoolDown = 0;
+
+            p_attackCoolDown += playerDataSO.NormalAttackCoolDown;
+        }
 
         /// <summary>
         /// Reset p_lastPressedJumpTime while pressed jump
@@ -50,6 +68,7 @@ namespace Askeladd.Scripts.Player.PlayerLogics
         {
             p_lastOnGroundedTime -= Time.deltaTime;
             p_lastPressedJumpTime -= Time.deltaTime;
+            p_attackCoolDown -= Time.deltaTime;
         }
 
         // Need to change name or something

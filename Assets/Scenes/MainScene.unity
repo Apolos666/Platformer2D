@@ -147,7 +147,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 118272457}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.86, y: -0.17, z: 0}
+  m_LocalPosition: {x: 0.99, y: -0.17, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -416,6 +416,7 @@ MonoBehaviour:
   playerCapsuleCollider: {fileID: 1226804351}
   playerStateChecker: {fileID: 1900965269}
   playerTimeTracker: {fileID: 406894647}
+  attackSpotHolder: {fileID: 118272458}
   playerDataSO: {fileID: 11400000, guid: 2600021921acd714dbf251c89729e1e5, type: 2}
 --- !u!114 &406894646
 MonoBehaviour:
@@ -462,6 +463,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerStateChecker: {fileID: 1900965269}
   playerTimeTracker: {fileID: 406894647}
+  playerVisual: {fileID: 1714037081}
   playerDataSO: {fileID: 11400000, guid: 2600021921acd714dbf251c89729e1e5, type: 2}
   attackSpotSphere: {fileID: 118272458}
   attackSpotSphereRadius: 0.65
@@ -1216,6 +1218,7 @@ MonoBehaviour:
   <p_isJumpCut>k__BackingField: 0
   <p_isNormalAttack>k__BackingField: 0
   <p_isHeavyAttack>k__BackingField: 0
+  <P_isCrouchAttack>k__BackingField: 0
   <p_IsGrounded>k__BackingField: 0
 --- !u!1001 &8909165313270318894
 PrefabInstance:

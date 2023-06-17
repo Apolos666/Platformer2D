@@ -18,6 +18,10 @@ MonoBehaviour:
   ColliderCenterCrouchState: {x: 0.017466545, y: -0.3200221, z: 0}
   ColliderRadiusCrouchState: 0.3206639
   ColliderHeightCrouchState: 0.8678637
+  NormalAttackSpot: {x: 0.99, y: -0.17, z: 0}
+  NormalAttackRadius: 0.65
+  CrouchAttackSpot: {x: 0.85, y: -0.41, z: 0}
+  CrouchAttackRadius: 0.52
   GravityStrength: -29.629631
   GravityScale: 3.0203495
   FallSpeedMult: 1.5
@@ -40,7 +44,10 @@ MonoBehaviour:
   JumpHangMaxSpeedMult: 1.3
   NormalAttackCoolDown: 0.5
   HeavyAttackCoolDown: 0.7
+  CrouchAttackCoolDown: 0.8
   NormalAttackDamage: 20
   HeavyAttackDamage: 50
+  CrouchAttackDamage: 30
+  StunnedAfterSwingTime: 0.1
   CoyoteTime: 0.157
   JumpInputBufferTime: 0.1

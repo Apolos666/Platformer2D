@@ -27,6 +27,22 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             GameInput.Instance.OnJumpingPerformed += GameInput_OnJumpingPerformed;
             playerHandleCombat.OnNormalAttack += PlayerHandleCombat_OnNormalAttack;
             playerHandleCombat.OnHeavyAttack += PlayerHandleCombat_OnHeavyAttack;
+            playerHandleCombat.OnCrouchAttack += PlayerHandleCombat_OnCrouchAttack;
+        }
+
+        private void OnDestroy()
+        {
+            GameInput.Instance.OnJumpingPerformed -= GameInput_OnJumpingPerformed;
+            playerHandleCombat.OnNormalAttack -= PlayerHandleCombat_OnNormalAttack;
+            playerHandleCombat.OnHeavyAttack -= PlayerHandleCombat_OnHeavyAttack;
+            playerHandleCombat.OnCrouchAttack -= PlayerHandleCombat_OnCrouchAttack;
+        }
+
+        private void PlayerHandleCombat_OnCrouchAttack()
+        {
+            p_attackCoolDown = 0;
+
+            p_attackCoolDown += playerDataSO.CrouchAttackCoolDown;
         }
 
         #region "Events"

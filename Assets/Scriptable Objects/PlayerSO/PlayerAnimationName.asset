@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NormalAttackAnimTime: 0.5
   HeavyAttackAnimTime: 0.7
+  CrouchAttackAnimTime: 0.8

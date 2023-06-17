@@ -58,6 +58,8 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         public bool p_isNormalAttack { get; private set; } = false;
         [field: SerializeField] 
         public bool p_isHeavyAttack { get; private set; } = false;
+        [field: SerializeField]
+        public bool P_isCrouchAttack { get; private set; } = false;
 
         [field: SerializeField] 
         public bool p_IsGrounded { get; private set; }
@@ -74,7 +76,20 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             playerHandleMovement.OnUnCrouch += PlayerHandleMovement_OnUnCrouch;
             playerHandleCombat.OnNormalAttack += PlayerHandleCombat_OnNormalAttack;
             playerHandleCombat.OnHeavyAttack += PlayerHandleCombat_OnHeavyAttack;
+            playerHandleCombat.OnCrouchAttack += PlayerHandleCombat_OnCrouchAttack;
             playerHandleCombat.OnNotAttack += PlayerHandleCombat_OnNotAttack;
+        }
+
+        private void OnDestroy()
+        {
+            GameInput.Instance.OnJumpingCanceled -= GameInput_OnJumpingCanceled;
+            playerHandleMovement.OnJumping -= PlayerHandleMovement_OnJumping;
+            playerHandleMovement.OnCrouch -= PlayerHandleMovement_OnCrouch;
+            playerHandleMovement.OnUnCrouch -= PlayerHandleMovement_OnUnCrouch;
+            playerHandleCombat.OnNormalAttack -= PlayerHandleCombat_OnNormalAttack;
+            playerHandleCombat.OnHeavyAttack -= PlayerHandleCombat_OnHeavyAttack;
+            playerHandleCombat.OnCrouchAttack -= PlayerHandleCombat_OnCrouchAttack;
+            playerHandleCombat.OnNotAttack -= PlayerHandleCombat_OnNotAttack;
         }
 
         #region "Events"
@@ -83,13 +98,22 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         {
             StartCoroutine(WaitForStunned(() => 
             {
+                if (p_isCrouching) return;
+
                 p_isCanMove = true;
             }));
 
             p_isNormalAttack = false;
             p_isHeavyAttack = false;
+            P_isCrouchAttack = false;
         }
-      
+
+        private void PlayerHandleCombat_OnCrouchAttack()
+        {
+            P_isCrouchAttack = true;
+            p_isCanMove = false;
+        }
+
         private void PlayerHandleCombat_OnHeavyAttack()
         {
             playerRb.velocity = Vector3.zero;

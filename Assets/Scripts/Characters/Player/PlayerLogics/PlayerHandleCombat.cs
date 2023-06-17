@@ -21,7 +21,7 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
     public class PlayerHandleCombat : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] 
+        [SerializeField]
         private PlayerStateChecker playerStateChecker;
         [SerializeField]
         private PlayerTimeTracker playerTimeTracker;
@@ -46,6 +46,7 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         // Events
         public event Action OnNormalAttack;
         public event Action OnHeavyAttack;
+        public event Action OnCrouchAttack;
         public event Action OnNotAttack;
 
         private PlayerCombatState _currentState = PlayerCombatState.NotAttack;
@@ -59,7 +60,25 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         {
             GameInput.Instance.OnNormalAttackPerformed += GameInput_OnNormalAttackPerformed;
             GameInput.Instance.OnHeavyAttackPerformed += GameInput_OnHeavyAttackPerformed;
+            GameInput.Instance.OnCrouchAttackPerformed += GameInput_OnCrouchAttackPerformed;
             playerVisual.OnLockedTillChanged += PlayerVisual_OnLockedTillChanged;
+        }
+
+        private void OnDestroy()
+        {
+            GameInput.Instance.OnNormalAttackPerformed -= GameInput_OnNormalAttackPerformed;
+            GameInput.Instance.OnHeavyAttackPerformed -= GameInput_OnHeavyAttackPerformed;
+            GameInput.Instance.OnCrouchAttackPerformed -= GameInput_OnCrouchAttackPerformed;
+            playerVisual.OnLockedTillChanged -= PlayerVisual_OnLockedTillChanged;
+        }
+
+        private void GameInput_OnCrouchAttackPerformed()
+        {
+            if (!playerStateChecker.p_isCrouching) return;
+
+            if (playerTimeTracker.p_attackCoolDown > 0) return;
+
+            _currentState = PlayerCombatState.CrouchAttack;
         }
 
         private void PlayerVisual_OnLockedTillChanged(object sender, PlayerVisual.OnLockedTillChangedEventArgs e)
@@ -72,6 +91,8 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         {
             if (!playerStateChecker.p_IsGrounded) return;
 
+            if (playerStateChecker.p_isCrouching) return;
+
             if (playerTimeTracker.p_attackCoolDown > 0) return;
 
             _currentState = PlayerCombatState.HeavyAttack;
@@ -80,6 +101,8 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         private void GameInput_OnNormalAttackPerformed()
         {
             if (!playerStateChecker.p_IsGrounded) return;
+
+            if (playerStateChecker.p_isCrouching) return;
 
             if (playerTimeTracker.p_attackCoolDown > 0) return;
 
@@ -90,19 +113,19 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         {
             if (_previousState == _currentState) return;
 
-            switch(_currentState)
+            switch (_currentState)
             {
                 case PlayerCombatState.NotAttack:
                     _previousState = _currentState;
 
                     OnNotAttack?.Invoke();
-                    
+
                     break;
                 case PlayerCombatState.NormalAttack:
                     OnNormalAttack?.Invoke();
 
                     HandleNormalAttack();
-                    
+
                     _previousState = _currentState;
 
                     StartCoroutine(WaitForAnimationCompleted(() =>
@@ -122,13 +145,24 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
                     {
                         _currentState = PlayerCombatState.NotAttack;
                     }));
-                  
+
                     break;
                 case PlayerCombatState.CrouchAttack:
+                    OnCrouchAttack?.Invoke();
+
+                    HandleCrouchAttack();
+
+                    _previousState = _currentState;
+
+                    StartCoroutine(WaitForAnimationCompleted(() =>
+                    {
+                        _currentState = PlayerCombatState.NotAttack;
+                    }));
+
                     break;
                 case PlayerCombatState.ComboAttack:
                     break;
-            }        
+            }
         }
 
         IEnumerator WaitForAnimationCompleted(Action OnComplete)
@@ -142,26 +176,25 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
         private void HandleNormalAttack()
         {
-            CommonFunctions.ClearArray(_enemiesColliders, 0, _enemiesColliders.Length);
-
-            int enemiesCollider = Physics.OverlapSphereNonAlloc(attackSpotSphere.position, attackSpotSphereRadius, _enemiesColliders, enemiesLayer);
-
-            for (int i = 0; i < enemiesCollider; i++)
-            {
-                IDamageAble damageAble = _enemiesColliders[i].GetComponentInChildren<IDamageAble>();
-
-                if (damageAble != null)
-                {
-                    damageAble.TakeDamage(playerDataSO.NormalAttackDamage);
-                }
-            }
+            HandleAttack(playerDataSO.NormalAttackSpot, playerDataSO.NormalAttackRadius, playerDataSO.NormalAttackDamage);
         }
 
         private void HandleHeavyAttack()
         {
+            HandleAttack(playerDataSO.NormalAttackSpot, playerDataSO.NormalAttackRadius, playerDataSO.HeavyAttackDamage);
+        }
+
+        private void HandleCrouchAttack()
+        {
+            HandleAttack(playerDataSO.CrouchAttackSpot, playerDataSO.CrouchAttackRadius, playerDataSO.CrouchAttackDamage);
+        }
+
+
+        private void HandleAttack(Vector3 attackSpot, float attackRadius, float attackDamage)
+        {
             CommonFunctions.ClearArray(_enemiesColliders, 0, _enemiesColliders.Length);
 
-            int enemiesCollider = Physics.OverlapSphereNonAlloc(attackSpotSphere.position, attackSpotSphereRadius, _enemiesColliders, enemiesLayer);
+            int enemiesCollider = Physics.OverlapSphereNonAlloc(attackSpotSphere.position, attackRadius, _enemiesColliders, enemiesLayer);
 
             for (int i = 0; i < enemiesCollider; i++)
             {
@@ -169,15 +202,23 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
                 if (damageAble != null)
                 {
-                    damageAble.TakeDamage(playerDataSO.HeavyAttackDamage);
+                    damageAble.TakeDamage(attackDamage);
                 }
             }
         }
 
+
         private void OnDrawGizmos()
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(attackSpotSphere.position, attackSpotSphereRadius);
+            if (!playerStateChecker.p_isCrouching)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(attackSpotSphere.position, playerDataSO.NormalAttackRadius);
+            } else
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(attackSpotSphere.position, playerDataSO.CrouchAttackRadius);
+            }            
         }
     }
 }

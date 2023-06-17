@@ -19,6 +19,8 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         private PlayerStateChecker playerStateChecker;
         [SerializeField]
         private PlayerTimeTracker playerTimeTracker;
+        [SerializeField]
+        private Transform attackSpotHolder;
 
         [Header("Player Settings")]
         [SerializeField]
@@ -37,9 +39,15 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             GameInput.Instance.OnCrouchCanceled += GameInput_OnCrouchCanceled;
         }
 
+        private void OnDestroy()
+        {
+            GameInput.Instance.OnCrouchPerformed -= GameInput_OnCrouchPerformed;
+            GameInput.Instance.OnCrouchCanceled -= GameInput_OnCrouchCanceled;
+        }
+
         private void GameInput_OnCrouchCanceled()
         {
-            HandleCrouch(playerDataSO.ColliderCenterNormalState, playerDataSO.ColliderRadiusNormalState, playerDataSO.ColliderHeightNormalState);
+            HandleCrouch(playerDataSO.ColliderCenterNormalState, playerDataSO.ColliderRadiusNormalState, playerDataSO.ColliderHeightNormalState, playerDataSO.NormalAttackSpot);
 
             OnUnCrouch?.Invoke();
         }
@@ -48,7 +56,7 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         {
             OnCrouch?.Invoke();
 
-            HandleCrouch(playerDataSO.ColliderCenterCrouchState, playerDataSO.ColliderRadiusCrouchState, playerDataSO.ColliderHeightCrouchState);         
+            HandleCrouch(playerDataSO.ColliderCenterCrouchState, playerDataSO.ColliderRadiusCrouchState, playerDataSO.ColliderHeightCrouchState, playerDataSO.CrouchAttackSpot);         
         }
 
 
@@ -154,13 +162,18 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
         }
 
-        private void HandleCrouch(Vector3 center, float radius, float height)
+        private void HandleCrouch(Vector3 center, float radius, float height, Vector3 attackSpot)
         {
             if (!playerStateChecker.p_isCrouching) return;
 
             playerCapsuleCollider.center = center;
             playerCapsuleCollider.radius = radius;
             playerCapsuleCollider.height = height;
+
+            Vector3 worldAttackSpot = transform.TransformPoint(attackSpot);
+
+            attackSpotHolder.position = worldAttackSpot;
+            //attackSpotHolder.localPosition = new Vector3(attackSpotHolder.localPosition.x, attackSpot.y, attackSpot.z);
         }
     }
 }

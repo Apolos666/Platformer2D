@@ -43,6 +43,11 @@ namespace Askeladd.Scripts.Characters.Player.PlayerVisuals
             playerStateChecker.OnDirChanged += PlayerStateChecker_OnDirChanged;
         }
 
+        private void OnDestroy()
+        {
+            playerStateChecker.OnDirChanged -= PlayerStateChecker_OnDirChanged;
+        }
+
         private void PlayerStateChecker_OnDirChanged()
         {
             TurnCharacter();
@@ -69,6 +74,8 @@ namespace Askeladd.Scripts.Characters.Player.PlayerVisuals
             if (playerStateChecker.p_isNormalAttack) return LockState(playerAnimationNameSO.PlayerNormalAttack, playerAnimationNameSO.NormalAttackAnimTime);
 
             if (playerStateChecker.p_isHeavyAttack) return LockState(playerAnimationNameSO.PlayerHeavyAttack, playerAnimationNameSO.HeavyAttackAnimTime);
+
+            if (playerStateChecker.P_isCrouchAttack) return LockState(playerAnimationNameSO.PlayerCrouchAttack, playerAnimationNameSO.CrouchAttackAnimTime);
 
             if (playerStateChecker.p_isCrouching) return playerAnimationNameSO.PlayerCrouching;
 

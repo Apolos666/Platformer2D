@@ -18,6 +18,7 @@ namespace Askeladd.Scripts.GameManagers
         public event Action OnCrouchCanceled;
         public event Action OnNormalAttackPerformed;
         public event Action OnHeavyAttackPerformed;
+        public event Action OnCrouchAttackPerformed;
 
         #endregion
 
@@ -46,6 +47,12 @@ namespace Askeladd.Scripts.GameManagers
             _userInput.Player.Crouch.canceled += Crouch_canceled;
             _userInput.Player.NormalAttack.performed += NormalAttack_performed;
             _userInput.Player.HeavyAttack.performed += HeavyAttack_performed;
+            _userInput.Player.CrouchAttack.performed += CrouchAttack_performed;
+        }
+
+        private void CrouchAttack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            OnCrouchAttackPerformed?.Invoke();
         }
 
         private void HeavyAttack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)

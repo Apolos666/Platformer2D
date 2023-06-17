@@ -15,6 +15,12 @@ namespace Askeladd.Scripts.ScriptableObjects.PlayerSO
         public float ColliderRadiusCrouchState; // The crouch "Radius" value of the collider.
         public float ColliderHeightCrouchState; // The crouch "Height" value of the collider.
 
+        [Header("Checks Holders")]
+        public Vector3 NormalAttackSpot; // The position holds the spot for the "attacking spot" in normal state.
+        public float NormalAttackRadius; // The radius for the "attacking spot" in normal state
+        public Vector3 CrouchAttackSpot; // The position holds the spot for the "crouch spot" in crouch state.
+        public float CrouchAttackRadius; // The radius for the "crouch spot" in crouch state
+
         [Header("Gravity")]
         [HideInInspector] public float GravityStrength; // Downwards force (gravity) needed for the desired jumpHeight and jumpTimeToApex.
         [HideInInspector] public float GravityScale; // Strength of the player's gravity as a multiplier of gravity (set in ProjectSettings/Physics).
@@ -52,8 +58,10 @@ namespace Askeladd.Scripts.ScriptableObjects.PlayerSO
         [Header("Combat")]
         public float NormalAttackCoolDown; // The next time the player can perform a normal attack is when the cooldown period is over
         public float HeavyAttackCoolDown; // The next time the player can perform a heavy attack is when the cooldown period is over
+        public float CrouchAttackCoolDown; // The next time the player can perform a crouch attack is when the cooldown period is over
         public float NormalAttackDamage; // The damage player does to the enemy
         public float HeavyAttackDamage; // The damage player does to the enemy
+        public float CrouchAttackDamage; // The damage player does to the enemy
         public float StunnedAfterSwingTime; // The duration player being stunned after swing sword
 
         [Header("Assists")]

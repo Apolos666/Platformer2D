@@ -1211,6 +1211,7 @@ MonoBehaviour:
     m_Bits: 64
   <p_isFacingRight>k__BackingField: 1
   <p_isCanMove>k__BackingField: 1
+  <p_isCanJump>k__BackingField: 1
   <p_isUserMoving>k__BackingField: 0
   <p_isCrouching>k__BackingField: 0
   <p_isJumping>k__BackingField: 0

@@ -19,6 +19,7 @@ namespace Askeladd.Scripts.GameManagers
         public event Action OnNormalAttackPerformed;
         public event Action OnHeavyAttackPerformed;
         public event Action OnCrouchAttackPerformed;
+        public event Action OnComboAttackPerformed;
 
         #endregion
 
@@ -48,6 +49,12 @@ namespace Askeladd.Scripts.GameManagers
             _userInput.Player.NormalAttack.performed += NormalAttack_performed;
             _userInput.Player.HeavyAttack.performed += HeavyAttack_performed;
             _userInput.Player.CrouchAttack.performed += CrouchAttack_performed;
+            _userInput.Player.ComboAttack.performed += ComboAttack_performed;
+        }
+
+        private void ComboAttack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            OnComboAttackPerformed?.Invoke();
         }
 
         private void CrouchAttack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -95,6 +102,8 @@ namespace Askeladd.Scripts.GameManagers
             _userInput.Player.Crouch.canceled -= Crouch_canceled;
             _userInput.Player.NormalAttack.performed -= NormalAttack_performed;
             _userInput.Player.HeavyAttack.performed -= HeavyAttack_performed;
+            _userInput.Player.CrouchAttack.performed -= CrouchAttack_performed;
+            _userInput.Player.ComboAttack.performed -= ComboAttack_performed;
         }
 
         /// <summary>

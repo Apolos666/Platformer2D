@@ -28,6 +28,10 @@ namespace Askeladd.Scripts.Characters.Player.PlayerVisuals
         // Events
         public event EventHandler<OnLockedTillChangedEventArgs> OnLockedTillChanged;
 
+        // Bools
+        [SerializeField]
+        private bool _isPreviousStateComboAttack;
+
         public class OnLockedTillChangedEventArgs : EventArgs
         {
             public float LockedTill;
@@ -65,21 +69,25 @@ namespace Askeladd.Scripts.Characters.Player.PlayerVisuals
 
         private int GetState()
         {
+            if (playerStateChecker.p_isComboAttack && !_isPreviousStateComboAttack) { _isPreviousStateComboAttack = true; return LockState(playerAnimationNameSO.PlayerHeavyAttack, playerAnimationNameSO.HeavyAttackAnimTime); }
+
             if (Time.time < _lockedTill) return _currentState;
 
-            if (playerStateChecker.p_isJumping) return playerAnimationNameSO.PlayerJumping;
+            if (playerStateChecker.p_isJumping) { _isPreviousStateComboAttack = false; return playerAnimationNameSO.PlayerJumping; }
 
-            if (playerStateChecker.p_isFalling) return playerAnimationNameSO.PlayerFalling;
+            if (playerStateChecker.p_isFalling) { _isPreviousStateComboAttack = false; return playerAnimationNameSO.PlayerFalling; }
 
-            if (playerStateChecker.p_isNormalAttack) return LockState(playerAnimationNameSO.PlayerNormalAttack, playerAnimationNameSO.NormalAttackAnimTime);
+            if (playerStateChecker.p_isNormalAttack) { _isPreviousStateComboAttack = false; return LockState(playerAnimationNameSO.PlayerNormalAttack, playerAnimationNameSO.NormalAttackAnimTime); }
 
-            if (playerStateChecker.p_isHeavyAttack) return LockState(playerAnimationNameSO.PlayerHeavyAttack, playerAnimationNameSO.HeavyAttackAnimTime);
+            if (playerStateChecker.p_isHeavyAttack) { _isPreviousStateComboAttack = false; return LockState(playerAnimationNameSO.PlayerHeavyAttack, playerAnimationNameSO.HeavyAttackAnimTime); }
 
-            if (playerStateChecker.P_isCrouchAttack) return LockState(playerAnimationNameSO.PlayerCrouchAttack, playerAnimationNameSO.CrouchAttackAnimTime);
+            if (playerStateChecker.P_isCrouchAttack) { _isPreviousStateComboAttack = false; return LockState(playerAnimationNameSO.PlayerCrouchAttack, playerAnimationNameSO.CrouchAttackAnimTime); }
 
-            if (playerStateChecker.p_isCrouching) return playerAnimationNameSO.PlayerCrouching;
+            if (playerStateChecker.p_isCrouching) { _isPreviousStateComboAttack = false; return playerAnimationNameSO.PlayerCrouching; }
 
-            if (playerStateChecker.p_isUserMoving) return playerAnimationNameSO.PlayerMoving;
+            if (playerStateChecker.p_isUserMoving) { _isPreviousStateComboAttack = false; return playerAnimationNameSO.PlayerMoving; }
+
+            _isPreviousStateComboAttack = false;
 
             return playerAnimationNameSO.PlayerIdle; 
 

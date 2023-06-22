@@ -80,6 +80,15 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ComboAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""295d3736-da4e-4b12-8b26-4da81a7aa5de"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""MultiTap(tapTime=0.2,tapDelay=0.5)"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -258,6 +267,28 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                     ""action"": ""CrouchAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cd877ddf-161f-4e25-8b8f-ff629398eeac"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ComboAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d055b1bd-265b-4823-a52a-be3e8693a4f1"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ComboAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -272,6 +303,7 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
         m_Player_NormalAttack = m_Player.FindAction("NormalAttack", throwIfNotFound: true);
         m_Player_HeavyAttack = m_Player.FindAction("HeavyAttack", throwIfNotFound: true);
         m_Player_CrouchAttack = m_Player.FindAction("CrouchAttack", throwIfNotFound: true);
+        m_Player_ComboAttack = m_Player.FindAction("ComboAttack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -337,6 +369,7 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_NormalAttack;
     private readonly InputAction m_Player_HeavyAttack;
     private readonly InputAction m_Player_CrouchAttack;
+    private readonly InputAction m_Player_ComboAttack;
     public struct PlayerActions
     {
         private @UserInput m_Wrapper;
@@ -347,6 +380,7 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
         public InputAction @NormalAttack => m_Wrapper.m_Player_NormalAttack;
         public InputAction @HeavyAttack => m_Wrapper.m_Player_HeavyAttack;
         public InputAction @CrouchAttack => m_Wrapper.m_Player_CrouchAttack;
+        public InputAction @ComboAttack => m_Wrapper.m_Player_ComboAttack;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -374,6 +408,9 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                 @CrouchAttack.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouchAttack;
                 @CrouchAttack.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouchAttack;
                 @CrouchAttack.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouchAttack;
+                @ComboAttack.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboAttack;
+                @ComboAttack.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboAttack;
+                @ComboAttack.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboAttack;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -396,6 +433,9 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                 @CrouchAttack.started += instance.OnCrouchAttack;
                 @CrouchAttack.performed += instance.OnCrouchAttack;
                 @CrouchAttack.canceled += instance.OnCrouchAttack;
+                @ComboAttack.started += instance.OnComboAttack;
+                @ComboAttack.performed += instance.OnComboAttack;
+                @ComboAttack.canceled += instance.OnComboAttack;
             }
         }
     }
@@ -408,5 +448,6 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
         void OnNormalAttack(InputAction.CallbackContext context);
         void OnHeavyAttack(InputAction.CallbackContext context);
         void OnCrouchAttack(InputAction.CallbackContext context);
+        void OnComboAttack(InputAction.CallbackContext context);
     }
 }

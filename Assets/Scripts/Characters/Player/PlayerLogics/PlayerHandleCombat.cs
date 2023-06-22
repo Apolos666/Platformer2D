@@ -43,14 +43,18 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         // Enemies Colliders
         private Collider[] _enemiesColliders = new Collider[10];
 
+        // Coroutines
+        private Coroutine _currentCoroutine;
+
         // Events
         public event Action OnNormalAttack;
         public event Action OnHeavyAttack;
         public event Action OnCrouchAttack;
+        public event Action OnComboAttack;
         public event Action OnNotAttack;
-
+        
         private PlayerCombatState _currentState = PlayerCombatState.NotAttack;
-        private PlayerCombatState _previousState;
+        private PlayerCombatState _previousState = PlayerCombatState.NotAttack;
 
         // Animation time
         private float _lockedTillChanged;
@@ -61,6 +65,7 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             GameInput.Instance.OnNormalAttackPerformed += GameInput_OnNormalAttackPerformed;
             GameInput.Instance.OnHeavyAttackPerformed += GameInput_OnHeavyAttackPerformed;
             GameInput.Instance.OnCrouchAttackPerformed += GameInput_OnCrouchAttackPerformed;
+            GameInput.Instance.OnComboAttackPerformed += GameInput_OnComboAttackPerformed;
             playerVisual.OnLockedTillChanged += PlayerVisual_OnLockedTillChanged;
         }
 
@@ -69,7 +74,15 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             GameInput.Instance.OnNormalAttackPerformed -= GameInput_OnNormalAttackPerformed;
             GameInput.Instance.OnHeavyAttackPerformed -= GameInput_OnHeavyAttackPerformed;
             GameInput.Instance.OnCrouchAttackPerformed -= GameInput_OnCrouchAttackPerformed;
+            GameInput.Instance.OnComboAttackPerformed -= GameInput_OnComboAttackPerformed;
             playerVisual.OnLockedTillChanged -= PlayerVisual_OnLockedTillChanged;
+        }
+
+        private void GameInput_OnComboAttackPerformed()
+        {
+            if (_currentState != PlayerCombatState.NormalAttack) return;
+
+            _currentState = PlayerCombatState.ComboAttack;
         }
 
         private void GameInput_OnCrouchAttackPerformed()
@@ -95,11 +108,13 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
             if (playerTimeTracker.p_attackCoolDown > 0) return;
 
-            _currentState = PlayerCombatState.HeavyAttack;
+            _currentState = PlayerCombatState.HeavyAttack; 
         }
 
         private void GameInput_OnNormalAttackPerformed()
         {
+            if (_currentState == PlayerCombatState.ComboAttack) return;
+
             if (!playerStateChecker.p_IsGrounded) return;
 
             if (playerStateChecker.p_isCrouching) return;
@@ -116,9 +131,11 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             switch (_currentState)
             {
                 case PlayerCombatState.NotAttack:
+                    OnNotAttack?.Invoke();
+
                     _previousState = _currentState;
 
-                    OnNotAttack?.Invoke();
+                    //Debug.Log("Not Attack");
 
                     break;
                 case PlayerCombatState.NormalAttack:
@@ -128,7 +145,9 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
                     _previousState = _currentState;
 
-                    StartCoroutine(WaitForAnimationCompleted(() =>
+                    //Debug.Log("Normal attack");
+
+                    _currentCoroutine = StartCoroutine(WaitForAnimationCompleted(() =>
                     {
                         _currentState = PlayerCombatState.NotAttack;
                     }));
@@ -141,7 +160,9 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
                     _previousState = _currentState;
 
-                    StartCoroutine(WaitForAnimationCompleted(() =>
+                    //Debug.Log("Heavy attack");
+
+                    _currentCoroutine = StartCoroutine(WaitForAnimationCompleted(() =>
                     {
                         _currentState = PlayerCombatState.NotAttack;
                     }));
@@ -154,15 +175,35 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
                     _previousState = _currentState;
 
-                    StartCoroutine(WaitForAnimationCompleted(() =>
+                    //Debug.Log("Crouch attack");
+
+                    _currentCoroutine = StartCoroutine(WaitForAnimationCompleted(() =>
                     {
                         _currentState = PlayerCombatState.NotAttack;
                     }));
 
                     break;
                 case PlayerCombatState.ComboAttack:
+                    OnComboAttack?.Invoke();
+
+                    HandleHeavyAttack();
+
+                    _previousState = _currentState;
+
+                    //Debug.Log("Combo attack");
+
+                    if (_currentCoroutine != null)
+                    {
+                        StopCoroutine(_currentCoroutine);
+                    }
+
+                    _currentCoroutine = StartCoroutine(WaitForAnimationCompleted(() =>
+                    {
+                        _currentState = PlayerCombatState.NotAttack;
+                    }));
+
                     break;
-            }
+            }        
         }
 
         IEnumerator WaitForAnimationCompleted(Action OnComplete)

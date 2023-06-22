@@ -28,7 +28,8 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             playerHandleCombat.OnNormalAttack += PlayerHandleCombat_OnNormalAttack;
             playerHandleCombat.OnHeavyAttack += PlayerHandleCombat_OnHeavyAttack;
             playerHandleCombat.OnCrouchAttack += PlayerHandleCombat_OnCrouchAttack;
-        }
+            playerHandleCombat.OnComboAttack += PlayerHandleCombat_OnComboAttack;
+        }    
 
         private void OnDestroy()
         {
@@ -36,6 +37,16 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             playerHandleCombat.OnNormalAttack -= PlayerHandleCombat_OnNormalAttack;
             playerHandleCombat.OnHeavyAttack -= PlayerHandleCombat_OnHeavyAttack;
             playerHandleCombat.OnCrouchAttack -= PlayerHandleCombat_OnCrouchAttack;
+            playerHandleCombat.OnComboAttack -= PlayerHandleCombat_OnComboAttack;
+        }
+
+        #region "Events"
+
+        private void PlayerHandleCombat_OnComboAttack()
+        {
+            p_attackCoolDown = 0;
+
+            p_attackCoolDown += playerDataSO.HeavyAttackCoolDown;
         }
 
         private void PlayerHandleCombat_OnCrouchAttack()
@@ -44,8 +55,6 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
             p_attackCoolDown += playerDataSO.CrouchAttackCoolDown;
         }
-
-        #region "Events"
 
         private void PlayerHandleCombat_OnHeavyAttack()
         {

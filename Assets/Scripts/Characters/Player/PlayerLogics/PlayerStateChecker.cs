@@ -42,6 +42,8 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
         [field: SerializeField] 
         public bool p_isCanMove { get; private set; } = true;
+        [field: SerializeField]
+        public bool p_isCanJump { get; private set; } = true;
         [field: SerializeField] 
         public bool p_isUserMoving { get; private set; } = false;
         [field: SerializeField] 
@@ -60,6 +62,8 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         public bool p_isHeavyAttack { get; private set; } = false;
         [field: SerializeField]
         public bool P_isCrouchAttack { get; private set; } = false;
+        [field: SerializeField]
+        public bool p_isComboAttack { get; private set; } = false;
 
         [field: SerializeField] 
         public bool p_IsGrounded { get; private set; }
@@ -77,8 +81,9 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             playerHandleCombat.OnNormalAttack += PlayerHandleCombat_OnNormalAttack;
             playerHandleCombat.OnHeavyAttack += PlayerHandleCombat_OnHeavyAttack;
             playerHandleCombat.OnCrouchAttack += PlayerHandleCombat_OnCrouchAttack;
+            playerHandleCombat.OnComboAttack += PlayerHandleCombat_OnComboAttack;
             playerHandleCombat.OnNotAttack += PlayerHandleCombat_OnNotAttack;
-        }
+        }    
 
         private void OnDestroy()
         {
@@ -89,6 +94,7 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             playerHandleCombat.OnNormalAttack -= PlayerHandleCombat_OnNormalAttack;
             playerHandleCombat.OnHeavyAttack -= PlayerHandleCombat_OnHeavyAttack;
             playerHandleCombat.OnCrouchAttack -= PlayerHandleCombat_OnCrouchAttack;
+            playerHandleCombat.OnComboAttack -= PlayerHandleCombat_OnComboAttack;
             playerHandleCombat.OnNotAttack -= PlayerHandleCombat_OnNotAttack;
         }
 
@@ -101,17 +107,29 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
                 if (p_isCrouching) return;
 
                 p_isCanMove = true;
+                p_isCanJump = true;
             }));
 
             p_isNormalAttack = false;
             p_isHeavyAttack = false;
             P_isCrouchAttack = false;
+            p_isComboAttack = false;
+        }
+
+        private void PlayerHandleCombat_OnComboAttack()
+        {
+            playerRb.velocity = Vector3.zero;
+            p_isComboAttack = true;
+            p_isNormalAttack = false;
+            p_isCanMove = false;
+            p_isCanJump = false;
         }
 
         private void PlayerHandleCombat_OnCrouchAttack()
         {
             P_isCrouchAttack = true;
             p_isCanMove = false;
+            p_isCanJump = false;
         }
 
         private void PlayerHandleCombat_OnHeavyAttack()
@@ -119,6 +137,7 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             playerRb.velocity = Vector3.zero;
             p_isHeavyAttack = true;
             p_isCanMove = false;
+            p_isCanJump = false;
         }
 
         private void PlayerHandleCombat_OnNormalAttack()
@@ -126,12 +145,14 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             playerRb.velocity = Vector3.zero;
             p_isNormalAttack = true;
             p_isCanMove = false;
+            p_isCanJump = false;
         }
 
         private void PlayerHandleMovement_OnUnCrouch()
         {
             p_isCrouching = false;
             p_isCanMove = true;
+            p_isCanJump = true;
         }
 
         private void PlayerHandleMovement_OnCrouch()
@@ -141,6 +162,7 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             playerRb.velocity = Vector3.zero;
             p_isCrouching = true;
             p_isCanMove = false;
+            p_isCanJump = false;
         }
 
         
@@ -238,6 +260,8 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         /// </summary>
         public bool CanJump()
         {
+            if (!p_isCanJump) return p_isCanJump;
+
             return playerTimeTracker.p_lastOnGroundedTime > 0 && !p_isJumping;
         }
 

@@ -4,6 +4,7 @@ using Askeladd.Scripts.ScriptableObjects.PlayerSO;
 using System;
 using UnityEngine;
 using System.Collections;
+using Askeladd.Scripts.Camera;
 
 namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 {
@@ -72,6 +73,9 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         // Collider Arrays
         private Collider[] groundColliders = new Collider[10];
 
+        // Coroutines
+        private Coroutine _currentCoroutine;
+
         private void Start()
         {
             GameInput.Instance.OnJumpingCanceled += GameInput_OnJumpingCanceled;
@@ -98,11 +102,19 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             playerHandleCombat.OnNotAttack -= PlayerHandleCombat_OnNotAttack;
         }
 
+        private void OnDisable()
+        {
+            if (_currentCoroutine != null)
+            {
+                StopCoroutine(_currentCoroutine);
+            }
+        }
+
         #region "Events"
 
         private void PlayerHandleCombat_OnNotAttack()
         {
-            StartCoroutine(WaitForStunned(() => 
+            _currentCoroutine = StartCoroutine(WaitForStunned(() => 
             {
                 if (p_isCrouching) return;
 
@@ -221,12 +233,45 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
         /// </summary>
         private void CheckJumpingStatus()
         {
-            if (p_IsGrounded) { p_isJumping = false; p_isJumpCut = false; p_isFalling = false; return; }
+            if (p_IsGrounded) 
+            { 
+                p_isJumping = false; p_isJumpCut = false; p_isFalling = false;
 
-            if (playerRb.velocity.y > 0) { p_isJumping = true; return; }
+                if (!CameraManager.Instance.p_isLerpYDamping && CameraManager.Instance.p_LerpFromPlayerFalling)
+                {
+                    // Reset so it can be called again
+                    CameraManager.Instance.p_LerpFromPlayerFalling = false;
+                    
+                    CameraManager.Instance.LerpYDamping(false);
+                }
+
+                return; 
+            }
+
+            if (playerRb.velocity.y > 0) 
+            { 
+                p_isJumping = true;
+
+                if (!CameraManager.Instance.p_isLerpYDamping && CameraManager.Instance.p_LerpFromPlayerFalling)
+                {
+                    // Reset so it can be called again
+                    CameraManager.Instance.p_LerpFromPlayerFalling = false;
+
+                    CameraManager.Instance.LerpYDamping(false);
+                }
+
+                return; 
+            }
 
             p_isJumping = false;
             p_isFalling = true;
+
+            // If we are falling past a certain speed threshold
+            // LerpedFromPlayerFalling prevent when Coroutine complete then we still called that again
+            if (!CameraManager.Instance.p_isLerpYDamping && playerRb.velocity.y <= CameraManager.Instance.FallSpeedYDampingChangeThreshold && !CameraManager.Instance.p_LerpFromPlayerFalling)
+            {
+                CameraManager.Instance.LerpYDamping(true);
+            }
         }
 
         /// <summary>

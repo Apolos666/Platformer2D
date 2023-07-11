@@ -20,6 +20,8 @@ namespace Askeladd.Scripts.GameManagers
         public event Action OnHeavyAttackPerformed;
         public event Action OnCrouchAttackPerformed;
         public event Action OnComboAttackPerformed;
+        public event Action OnPanCameraPerformed;
+        public event Action OnPanCameraCanceled;
 
         #endregion
 
@@ -50,6 +52,18 @@ namespace Askeladd.Scripts.GameManagers
             _userInput.Player.HeavyAttack.performed += HeavyAttack_performed;
             _userInput.Player.CrouchAttack.performed += CrouchAttack_performed;
             _userInput.Player.ComboAttack.performed += ComboAttack_performed;
+            _userInput.Player.PanCamera.performed += PanCamera_performed;
+            _userInput.Player.PanCamera.canceled += PanCamera_canceled;
+        }
+
+        private void PanCamera_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            OnPanCameraCanceled?.Invoke();
+        }
+
+        private void PanCamera_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            OnPanCameraPerformed?.Invoke();
         }
 
         private void ComboAttack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -104,6 +118,8 @@ namespace Askeladd.Scripts.GameManagers
             _userInput.Player.HeavyAttack.performed -= HeavyAttack_performed;
             _userInput.Player.CrouchAttack.performed -= CrouchAttack_performed;
             _userInput.Player.ComboAttack.performed -= ComboAttack_performed;
+            _userInput.Player.PanCamera.performed -= PanCamera_performed;
+            _userInput.Player.PanCamera.canceled -= PanCamera_canceled;
         }
 
         /// <summary>
@@ -115,6 +131,13 @@ namespace Askeladd.Scripts.GameManagers
             Vector2 f_movementInput = _userInput.Player.Movement.ReadValue<Vector2>();
             f_movementInput = f_movementInput.normalized;
             return f_movementInput;
+        }
+
+        public Vector2 GetPanCameraDirectionNormalized()
+        {
+            Vector2 upDownInput = _userInput.Player.PanCamera.ReadValue<Vector2>();
+
+            return upDownInput;
         }
     }
 }

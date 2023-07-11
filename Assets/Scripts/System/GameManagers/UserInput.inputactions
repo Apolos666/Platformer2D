@@ -67,6 +67,15 @@
                     "processors": "",
                     "interactions": "MultiTap(tapTime=0.2,tapDelay=0.5)",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "PanCamera",
+                    "type": "Value",
+                    "id": "927754f7-a3c5-4845-98c2-c15c2d585f19",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "Hold(duration=0.75,pressPoint=0.1)",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -267,6 +276,39 @@
                     "action": "ComboAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "Up/Down",
+                    "id": "9ab46be1-258d-49e5-933d-6a8b47573655",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PanCamera",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "e42311fe-1c1b-490b-bbb3-9d0583791c14",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PanCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "7df4347f-7b9d-4841-b7e9-8d68d4fd3117",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PanCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }

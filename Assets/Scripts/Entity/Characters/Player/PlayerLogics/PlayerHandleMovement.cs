@@ -59,23 +59,9 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             HandleCrouch(playerDataSO.ColliderCenterCrouchState, playerDataSO.ColliderRadiusCrouchState, playerDataSO.ColliderHeightCrouchState, playerDataSO.CrouchAttackSpot);         
         }
 
-
-        #region "Events || Need to change"
-
-        //private void GameInput_OnJumpingPerformed()
-        //{
-        //    if (!playerStateChecker.p_IsGrounded) return;
-
-        //    HandleJumping();
-
-        //    OnJumping?.Invoke();
-        //}
-
-        #endregion
-
         // Need to change
         private void Update()
-        {
+        {      
             if (playerStateChecker.CanJump() && playerTimeTracker.p_lastPressedJumpTime > 0)
             {
                 HandleJumping();

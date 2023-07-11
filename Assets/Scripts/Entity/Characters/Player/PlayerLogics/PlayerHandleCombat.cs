@@ -77,6 +77,13 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             GameInput.Instance.OnComboAttackPerformed -= GameInput_OnComboAttackPerformed;
             playerVisual.OnLockedTillChanged -= PlayerVisual_OnLockedTillChanged;
         }
+        private void OnDisable()
+        {
+            if (_currentCoroutine != null)
+            {
+                StopCoroutine(_currentCoroutine);
+            }
+        }
 
         private void GameInput_OnComboAttackPerformed()
         {
@@ -135,7 +142,10 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
                     _previousState = _currentState;
 
-                    //Debug.Log("Not Attack");
+                    if (_currentCoroutine != null)
+                    {
+                        StopCoroutine(_currentCoroutine);
+                    }
 
                     break;
                 case PlayerCombatState.NormalAttack:
@@ -145,7 +155,10 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
                     _previousState = _currentState;
 
-                    //Debug.Log("Normal attack");
+                    if (_currentCoroutine != null)
+                    {
+                        StopCoroutine(_currentCoroutine);
+                    }
 
                     _currentCoroutine = StartCoroutine(WaitForAnimationCompleted(() =>
                     {
@@ -160,7 +173,10 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
                     _previousState = _currentState;
 
-                    //Debug.Log("Heavy attack");
+                    if (_currentCoroutine != null)
+                    {
+                        StopCoroutine(_currentCoroutine);
+                    }
 
                     _currentCoroutine = StartCoroutine(WaitForAnimationCompleted(() =>
                     {
@@ -175,7 +191,10 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
                     _previousState = _currentState;
 
-                    //Debug.Log("Crouch attack");
+                    if (_currentCoroutine != null)
+                    {
+                        StopCoroutine(_currentCoroutine);
+                    }
 
                     _currentCoroutine = StartCoroutine(WaitForAnimationCompleted(() =>
                     {
@@ -189,8 +208,6 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
                     HandleHeavyAttack();
 
                     _previousState = _currentState;
-
-                    //Debug.Log("Combo attack");
 
                     if (_currentCoroutine != null)
                     {

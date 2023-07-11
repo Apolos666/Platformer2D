@@ -4,6 +4,7 @@ using UnityEngine;
 using Askeladd.Scripts.Characters.Player.PlayerLogics;
 using Askeladd.Scripts.ScriptableObjects.PlayerSO;
 using System;
+using Askeladd.Scripts.Camera;
 
 namespace Askeladd.Scripts.Characters.Player.PlayerVisuals
 {
@@ -14,11 +15,13 @@ namespace Askeladd.Scripts.Characters.Player.PlayerVisuals
 
         [Header("References")]
         [SerializeField]
-        private PlayerStateChecker playerStateChecker;
+        private PlayerStateChecker _playerStateChecker;
         [SerializeField]
-        private Transform player;
+        private Transform _player;
         [SerializeField]
-        private PlayerAnimationNameSO playerAnimationNameSO;
+        private PlayerAnimationNameSO _playerAnimationNameSO;
+        [SerializeField]
+        private CameraFollowObject _cameraFollowObject;
         private Animator _animator;
 
         // Animation
@@ -44,12 +47,12 @@ namespace Askeladd.Scripts.Characters.Player.PlayerVisuals
 
         private void Start()
         {
-            playerStateChecker.OnDirChanged += PlayerStateChecker_OnDirChanged;
+            _playerStateChecker.OnDirChanged += PlayerStateChecker_OnDirChanged;
         }
 
         private void OnDestroy()
         {
-            playerStateChecker.OnDirChanged -= PlayerStateChecker_OnDirChanged;
+            _playerStateChecker.OnDirChanged -= PlayerStateChecker_OnDirChanged;
         }
 
         private void PlayerStateChecker_OnDirChanged()
@@ -69,27 +72,27 @@ namespace Askeladd.Scripts.Characters.Player.PlayerVisuals
 
         private int GetState()
         {
-            if (playerStateChecker.p_isComboAttack && !_isPreviousStateComboAttack) { _isPreviousStateComboAttack = true; return LockState(playerAnimationNameSO.PlayerHeavyAttack, playerAnimationNameSO.HeavyAttackAnimTime); }
+            if (_playerStateChecker.p_isComboAttack && !_isPreviousStateComboAttack) { _isPreviousStateComboAttack = true; return LockState(_playerAnimationNameSO.PlayerHeavyAttack, _playerAnimationNameSO.HeavyAttackAnimTime); }
 
             if (Time.time < _lockedTill) return _currentState;
 
-            if (playerStateChecker.p_isJumping) { _isPreviousStateComboAttack = false; return playerAnimationNameSO.PlayerJumping; }
+            if (_playerStateChecker.p_isJumping) { _isPreviousStateComboAttack = false; return _playerAnimationNameSO.PlayerJumping; }
 
-            if (playerStateChecker.p_isFalling) { _isPreviousStateComboAttack = false; return playerAnimationNameSO.PlayerFalling; }
+            if (_playerStateChecker.p_isFalling) { _isPreviousStateComboAttack = false; return _playerAnimationNameSO.PlayerFalling; }
 
-            if (playerStateChecker.p_isNormalAttack) { _isPreviousStateComboAttack = false; return LockState(playerAnimationNameSO.PlayerNormalAttack, playerAnimationNameSO.NormalAttackAnimTime); }
+            if (_playerStateChecker.p_isNormalAttack) { _isPreviousStateComboAttack = false; return LockState(_playerAnimationNameSO.PlayerNormalAttack, _playerAnimationNameSO.NormalAttackAnimTime); }
 
-            if (playerStateChecker.p_isHeavyAttack) { _isPreviousStateComboAttack = false; return LockState(playerAnimationNameSO.PlayerHeavyAttack, playerAnimationNameSO.HeavyAttackAnimTime); }
+            if (_playerStateChecker.p_isHeavyAttack) { _isPreviousStateComboAttack = false; return LockState(_playerAnimationNameSO.PlayerHeavyAttack, _playerAnimationNameSO.HeavyAttackAnimTime); }
 
-            if (playerStateChecker.P_isCrouchAttack) { _isPreviousStateComboAttack = false; return LockState(playerAnimationNameSO.PlayerCrouchAttack, playerAnimationNameSO.CrouchAttackAnimTime); }
+            if (_playerStateChecker.P_isCrouchAttack) { _isPreviousStateComboAttack = false; return LockState(_playerAnimationNameSO.PlayerCrouchAttack, _playerAnimationNameSO.CrouchAttackAnimTime); }
 
-            if (playerStateChecker.p_isCrouching) { _isPreviousStateComboAttack = false; return playerAnimationNameSO.PlayerCrouching; }
+            if (_playerStateChecker.p_isCrouching) { _isPreviousStateComboAttack = false; return _playerAnimationNameSO.PlayerCrouching; }
 
-            if (playerStateChecker.p_isUserMoving) { _isPreviousStateComboAttack = false; return playerAnimationNameSO.PlayerMoving; }
+            if (_playerStateChecker.p_isUserMoving) { _isPreviousStateComboAttack = false; return _playerAnimationNameSO.PlayerMoving; }
 
             _isPreviousStateComboAttack = false;
 
-            return playerAnimationNameSO.PlayerIdle; 
+            return _playerAnimationNameSO.PlayerIdle; 
 
             int LockState(int s, float t)
             {
@@ -106,11 +109,13 @@ namespace Askeladd.Scripts.Characters.Player.PlayerVisuals
 
         private void TurnCharacter()
         {
-            Vector3 lookDirection = playerStateChecker.IsFacingRight() ? Vector3.right : Vector3.left;
+            Vector3 lookDirection = _playerStateChecker.IsFacingRight() ? Vector3.right : Vector3.left;
 
             Quaternion targetRotation = Quaternion.FromToRotation(Vector3.right, lookDirection);
 
-            player.rotation = targetRotation;
+            _player.rotation = targetRotation;
+
+            _cameraFollowObject.CallTurn();
         }
     }
 }

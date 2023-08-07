@@ -96,7 +96,16 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                     ""id"": ""927754f7-a3c5-4845-98c2-c15c2d585f19"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
-                    ""interactions"": ""Hold(duration=0.75,pressPoint=0.1)"",
+                    ""interactions"": ""Hold(duration=0.5,pressPoint=0.1)"",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""DrawProjectile"",
+                    ""type"": ""Value"",
+                    ""id"": ""04a0a911-41dc-43ce-b93c-d982f4beb540"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
                     ""initialStateCheck"": true
                 }
             ],
@@ -331,6 +340,50 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                     ""action"": ""PanCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Up/Down GamePad"",
+                    ""id"": ""00299aba-e033-43f0-b274-9f31024f86b5"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PanCamera"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""e90ae472-7996-416b-aa33-5fe9bd82a3ab"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PanCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""88c5a39e-b98e-4d85-8a47-cff8bd90fad5"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PanCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ee22114c-cdf6-46b0-a007-bd4d67d743f2"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DrawProjectile"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -347,6 +400,7 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
         m_Player_CrouchAttack = m_Player.FindAction("CrouchAttack", throwIfNotFound: true);
         m_Player_ComboAttack = m_Player.FindAction("ComboAttack", throwIfNotFound: true);
         m_Player_PanCamera = m_Player.FindAction("PanCamera", throwIfNotFound: true);
+        m_Player_DrawProjectile = m_Player.FindAction("DrawProjectile", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -414,6 +468,7 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_CrouchAttack;
     private readonly InputAction m_Player_ComboAttack;
     private readonly InputAction m_Player_PanCamera;
+    private readonly InputAction m_Player_DrawProjectile;
     public struct PlayerActions
     {
         private @UserInput m_Wrapper;
@@ -426,6 +481,7 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
         public InputAction @CrouchAttack => m_Wrapper.m_Player_CrouchAttack;
         public InputAction @ComboAttack => m_Wrapper.m_Player_ComboAttack;
         public InputAction @PanCamera => m_Wrapper.m_Player_PanCamera;
+        public InputAction @DrawProjectile => m_Wrapper.m_Player_DrawProjectile;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -459,6 +515,9 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                 @PanCamera.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPanCamera;
                 @PanCamera.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPanCamera;
                 @PanCamera.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPanCamera;
+                @DrawProjectile.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrawProjectile;
+                @DrawProjectile.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrawProjectile;
+                @DrawProjectile.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrawProjectile;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -487,6 +546,9 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                 @PanCamera.started += instance.OnPanCamera;
                 @PanCamera.performed += instance.OnPanCamera;
                 @PanCamera.canceled += instance.OnPanCamera;
+                @DrawProjectile.started += instance.OnDrawProjectile;
+                @DrawProjectile.performed += instance.OnDrawProjectile;
+                @DrawProjectile.canceled += instance.OnDrawProjectile;
             }
         }
     }
@@ -501,5 +563,6 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
         void OnCrouchAttack(InputAction.CallbackContext context);
         void OnComboAttack(InputAction.CallbackContext context);
         void OnPanCamera(InputAction.CallbackContext context);
+        void OnDrawProjectile(InputAction.CallbackContext context);
     }
 }

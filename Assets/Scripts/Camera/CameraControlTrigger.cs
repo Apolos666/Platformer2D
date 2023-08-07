@@ -16,7 +16,7 @@ namespace Askeladd.Scripts.Camera
 
         private void Awake()
         {
-            _boxCollider = GetComponent<BoxCollider>();
+            _boxCollider = GetComponent<BoxCollider>(); 
         }
 
         private void OnTriggerEnter(Collider other)

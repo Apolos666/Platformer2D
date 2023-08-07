@@ -37,37 +37,24 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
 
         // Player states
         [field:Header("Player States")]
-        [field:SerializeField] 
-        public bool p_isFacingRight { get; private set; } = true;
+        [field:SerializeField] public bool p_isFacingRight { get; private set; } = true;
         private bool _previousIsFacingRight;
 
-        [field: SerializeField] 
-        public bool p_isCanMove { get; private set; } = true;
-        [field: SerializeField]
-        public bool p_isCanJump { get; private set; } = true;
-        [field: SerializeField] 
-        public bool p_isUserMoving { get; private set; } = false;
-        [field: SerializeField] 
-        public bool p_isCrouching { get; private set; } = false;
+        [field: SerializeField] public bool p_isCanMove { get; private set; } = true;
+        [field: SerializeField] public bool p_isCanJump { get; private set; } = true;
+        [field: SerializeField] public bool p_isUserMoving { get; private set; } = false;
+        [field: SerializeField] public bool p_isCrouching { get; private set; } = false;
 
-        [field: SerializeField] 
-        public bool p_isJumping { get; private set; } = false;
-        [field: SerializeField] 
-        public bool p_isFalling { get; private set; } = false;
-        [field: SerializeField] 
-        public bool p_isJumpCut { get; private set; }
+        [field: SerializeField] public bool p_isJumping { get; private set; } = false;
+        [field: SerializeField] public bool p_isFalling { get; private set; } = false;
+        [field: SerializeField] public bool p_isJumpCut { get; private set; }
 
-        [field: SerializeField] 
-        public bool p_isNormalAttack { get; private set; } = false;
-        [field: SerializeField] 
-        public bool p_isHeavyAttack { get; private set; } = false;
-        [field: SerializeField]
-        public bool P_isCrouchAttack { get; private set; } = false;
-        [field: SerializeField]
-        public bool p_isComboAttack { get; private set; } = false;
+        [field: SerializeField] public bool p_isNormalAttack { get; private set; } = false;
+        [field: SerializeField] public bool p_isHeavyAttack { get; private set; } = false;
+        [field: SerializeField] public bool P_isCrouchAttack { get; private set; } = false;
+        [field: SerializeField] public bool p_isComboAttack { get; private set; } = false;
 
-        [field: SerializeField] 
-        public bool p_IsGrounded { get; private set; }
+        [field: SerializeField] public bool p_IsGrounded { get; private set; }
         
 
         // Collider Arrays
@@ -176,7 +163,6 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             p_isCanMove = false;
             p_isCanJump = false;
         }
-
         
         private void PlayerHandleMovement_OnJumping()
         {

@@ -55,7 +55,7 @@ namespace Askeladd.Scripts.GameManagers
             _userInput.Player.PanCamera.performed += PanCamera_performed;
             _userInput.Player.PanCamera.canceled += PanCamera_canceled;
         }
-
+        
         private void PanCamera_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
         {
             OnPanCameraCanceled?.Invoke();
@@ -128,9 +128,9 @@ namespace Askeladd.Scripts.GameManagers
         /// <returns> Vector2 movement input </returns>
         public Vector2 GetMovementInput2DNormalized()
         {
-            Vector2 f_movementInput = _userInput.Player.Movement.ReadValue<Vector2>();
-            f_movementInput = f_movementInput.normalized;
-            return f_movementInput;
+            Vector2 movementInput = _userInput.Player.Movement.ReadValue<Vector2>();
+            movementInput = movementInput.normalized;
+            return movementInput;
         }
 
         public Vector2 GetPanCameraDirectionNormalized()
@@ -138,6 +138,11 @@ namespace Askeladd.Scripts.GameManagers
             Vector2 upDownInput = _userInput.Player.PanCamera.ReadValue<Vector2>();
 
             return upDownInput;
+        }
+
+        public bool IsDrawProjectile()
+        {
+            return _userInput.Player.DrawProjectile.ReadValue<float>() > 0.1f;
         }
     }
 }

@@ -59,7 +59,6 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             HandleCrouch(playerDataSO.ColliderCenterCrouchState, playerDataSO.ColliderRadiusCrouchState, playerDataSO.ColliderHeightCrouchState, playerDataSO.CrouchAttackSpot);         
         }
 
-        // Need to change
         private void Update()
         {      
             if (playerStateChecker.CanJump() && playerTimeTracker.p_lastPressedJumpTime > 0)
@@ -126,7 +125,7 @@ namespace Askeladd.Scripts.Characters.Player.PlayerLogics
             // The movement will be equal zero when player reach max speed.
             float movement = speedDiff * accelRate;
 
-            playerRb.AddForce(movement * Vector2.right, ForceMode.Force);
+            playerRb.AddForce(movement * Vector2.right, ForceMode.Force);;
 
             #endregion
         }
